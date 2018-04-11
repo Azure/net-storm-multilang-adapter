@@ -64,7 +64,9 @@ namespace Dotnet.Storm.Adapter.Components
 
         internal override void Start()
         {
-            while(running)
+            OnInitialized?.Invoke(this, EventArgs.Empty);
+
+            while (running)
             {
                 InMessage message = Channel.Instance.Receive<ExecuteTuple>();
                 if (message != null)
@@ -135,7 +137,9 @@ namespace Dotnet.Storm.Adapter.Components
         #region Bolt interface
         protected abstract void Execute(StormTuple tuple);
 
-        protected event EventHandler<EventArgs> OnTick;
+        protected event EventHandler OnInitialized;
+
+        protected event EventHandler OnTick;
 
         protected event EventHandler<TaskIds> OnTaskIds;
         #endregion

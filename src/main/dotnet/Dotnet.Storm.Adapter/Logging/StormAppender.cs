@@ -134,4 +134,12 @@ namespace Dotnet.Storm.Adapter.Logging
 
         }
     }
+
+    public static class ILogEx
+    {
+        public static void Metrics(this ILog log, string name, object value)
+        {
+            Channel.Instance.Send(new MetricMessage(name, value));
+        }
+    }
 }

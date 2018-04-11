@@ -85,27 +85,6 @@ namespace Dotnet.Storm.Adapter
 
             Logger.Debug($"Current working directory: {Environment.CurrentDirectory}.");
 
-            // Instantiate component
-            Type type = null;
-
-            // className is required option so we don't need to check it for NULL
-            if(!string.IsNullOrEmpty(assemblyName))
-            {
-                Logger.Debug($"Loading assembly: {assemblyName}.");
-                AssemblyName name = new AssemblyName(assemblyName);
-                string path = Path.Combine(Environment.CurrentDirectory, name.Name + ".dll");
-
-                Assembly assembly = Assembly.Load(File.ReadAllBytes(path));
-                type = assembly.GetType(className, true);
-            }
-
-            Component component = (Component)Activator.CreateInstance(type);
-
-            if (arguments != null)
-            {
-                component.SetArguments(arguments);
-            }
-
             // there is an idea to use shared memory channel
             Channel.Instance = new StandardChannel
             {
@@ -113,15 +92,42 @@ namespace Dotnet.Storm.Adapter
                 Serializer = new JsonSerializer()
             };
 
-            //handshake protocol
+            // Instantiate component
+            Type type = null;
+
+            // className is required option so we don't need to check it for NULL
+            if(!string.IsNullOrEmpty(assemblyName))
+            {
+                assemblyName = assemblyName.EndsWith(".dll") ? assemblyName : assemblyName + ".dll";
+                string path = Path.Combine(Environment.CurrentDirectory, assemblyName);
+
+                Logger.Debug($"Loading assembly: {assemblyName}.");
+                Assembly assembly = Assembly.Load(File.ReadAllBytes(path));
+                type = assembly.GetType(className, true);
+            }
+
+            Logger.Debug($"Trying to create instance of {type.Name}.");
+            Component component = (Component)Activator.CreateInstance(type);
+
+            Logger.Debug($"Setting up the arguments {arguments}.");
+            component.SetArguments(arguments);
+
+            Logger.Debug($"Executing handshake protocol.");
             component.Connect();
 
-            // the connection is established!!! congratulations!!!
-            // now we can enable storm logger
+            Logger.Debug($"Enabling storm logging mechanism.");
             StormAppender.Enable();
 
-            //execution cicle
+            Logger.Debug($"Let's start the process.");
             component.Start();
+        }
+
+        private static string getName(string assemblyName)
+        {
+            string name = assemblyName.Replace(".dll", "");
+            string[] parts = name.Split(new char[] { '/', '\\' });
+            return parts[parts.Length - 1];
+
         }
     }
 }
