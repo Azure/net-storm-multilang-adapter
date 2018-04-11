@@ -53,12 +53,9 @@ API
 ========
 
 ## Common
-
 - Properties
 
         protected readonly static ILog Logger;
-
-        protected LocalStorm Storm;
 
         protected string[] Arguments;
 
@@ -69,12 +66,14 @@ API
         protected static bool IsGuarantee;
 
         protected static int MessageTimeout;
-        
+            
 - Events
 
         protected event EventHandler<TaskIds> OnTaskIds;
 
-- LocalStorm methods
+        protected event EventHandler OnInitialized;
+
+- Storm methods
 
         public void Sync()
 
@@ -85,13 +84,11 @@ API
         public VerificationResult VerifyInput(string component, string stream, List<object> tuple)
 
         public VerificationResult VerifyOutput(string stream, List<object> tuple)
-            
+
 ## Spout specific
-- Properties
+- Methods
 
-        protected new LocalStorm Storm
-
-        protected bool IsEnabled = false;
+        protected abstract void Next();
 
 - Events
 
@@ -99,20 +96,24 @@ API
 
         protected event EventHandler OnDeactivate;
 
-- LocalStorm methods
+- Properties
+
+        protected bool IsEnabled = false;
+
+- Storm methods
 
         public void Emit(List<object> tuple, string stream = "default", long task = 0, bool needTaskIds = false)
 
+## Bolt specific
 - Methods
 
-        protected abstract void Next();
+         protected abstract void Execute(StormTuple tuple);
 
-## Bolt specific
 - Events
 
         protected event EventHandler<EventArgs> OnTick;
 
-- LocalStorm methods
+- Storm methods
 
         public void Ack(string id);
 

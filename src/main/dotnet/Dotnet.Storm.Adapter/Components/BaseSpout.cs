@@ -16,9 +16,9 @@ namespace Dotnet.Storm.Adapter.Components
 
         private const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 
-        internal static MemoryCache PendingQueue = MemoryCache.Default;
-
-        internal static CacheItemPolicy policy;
+        //internal static MemoryCache PendingQueue = MemoryCache.Default;
+        //internal static CacheItemPolicy policy;
+        internal static IDictionary<string, OutMessage> PendingQueue = new Dictionary<string, OutMessage>();
 
         private bool running = true;
 
@@ -51,17 +51,19 @@ namespace Dotnet.Storm.Adapter.Components
 
                     Channel.Instance.Send(message);
 
-                    PendingQueue.Set(id, message, policy);
+                    PendingQueue.Add(id, message);
+                    //PendingQueue.Set(id, message, policy);
                 }
             }
         }
 
         internal override void Start()
         {
-            policy = new CacheItemPolicy()
-            {
-                SlidingExpiration = new TimeSpan(0, 0, MessageTimeout)
-            };
+            OnInitialized?.Invoke(this, EventArgs.Empty);
+            //policy = new CacheItemPolicy()
+            //{
+            //    SlidingExpiration = new TimeSpan(0, 0, MessageTimeout)
+            //};
 
             while (running)
             {
@@ -122,7 +124,7 @@ namespace Dotnet.Storm.Adapter.Components
         {
             if (IsEnabled)
             {
-                if (PendingQueue.Contains(id))
+                if (PendingQueue.ContainsKey(id))
                 {
                     PendingQueue.Remove(id);
                 }
@@ -137,9 +139,9 @@ namespace Dotnet.Storm.Adapter.Components
         {
             if (IsEnabled)
             {
-                if (PendingQueue.Contains(id))
+                if (PendingQueue.ContainsKey(id))
                 {
-                    if (PendingQueue.Get(id) is SpoutTuple message)
+                    if (PendingQueue[id] is SpoutTuple message)
                     {
                         Channel.Instance.Send(message);
                     }
@@ -191,6 +193,8 @@ namespace Dotnet.Storm.Adapter.Components
         }
 
         #region Spout interface
+        protected event EventHandler OnInitialized;
+
         protected event EventHandler OnActivate;
 
         protected event EventHandler OnDeactivate;

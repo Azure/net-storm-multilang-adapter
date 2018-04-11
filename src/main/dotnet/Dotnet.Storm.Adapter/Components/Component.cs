@@ -101,6 +101,9 @@ namespace Dotnet.Storm.Adapter.Components
         {
             get
             {
+                if (!Configuration.ContainsKey("topology.acker.executors"))
+                    return false;
+
                 object number = Configuration["topology.acker.executors"];
                 if (number == null)
                 {
@@ -118,6 +121,9 @@ namespace Dotnet.Storm.Adapter.Components
         {
             get
             {
+                if (!Configuration.ContainsKey("topology.message.timeout.secs"))
+                    return 30;
+
                 object number = Configuration["topology.message.timeout.secs"];
                 if (number == null)
                 {
@@ -130,8 +136,6 @@ namespace Dotnet.Storm.Adapter.Components
                 return 30;
             }
         }
-
-        protected event EventHandler OnInitialized;
         #endregion
 
         internal void SetArguments(string line)
@@ -139,6 +143,10 @@ namespace Dotnet.Storm.Adapter.Components
             if(!string.IsNullOrEmpty(line))
             {
                 Arguments = line.Split(new char[] { ' ' });
+            }
+            else
+            {
+                Arguments = new string[0];
             }
         }
 
@@ -166,9 +174,6 @@ namespace Dotnet.Storm.Adapter.Components
 
             // send PID back to storm
             Channel.Instance.Send(new PidMessage(pid));
-
-            // now let's notify the component the context is set and configuration is available
-            OnInitialized?.Invoke(this, EventArgs.Empty);
         }
 
         internal abstract void Start();

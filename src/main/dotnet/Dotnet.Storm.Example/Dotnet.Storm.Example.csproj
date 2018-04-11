@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Dotnet.Storm.Adapter\Dotnet.Storm.Adapter.csproj" />
+    <PackageReference Include="Dotnet.Storm.Adapter" Version="1.0.9" />
   </ItemGroup>
 
 </Project>
