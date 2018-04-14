@@ -30,7 +30,7 @@ namespace Dotnet.Storm.Example
             Logger.Info($"Received task ids: {string.Join(',', ids.Ids)}");
         }
 
-        protected override void Execute(StormTuple tuple)
+        public override void Execute(StormTuple tuple)
         {
             char[] separator = new char[] { ' ', '[', ']', '<', '>', '(', ')', '.', ',' };
             char[] trimChars = new char[] { '.', ',' };

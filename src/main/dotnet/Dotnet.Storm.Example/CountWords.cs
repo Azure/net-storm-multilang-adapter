@@ -26,7 +26,7 @@ namespace Dotnet.Storm.Example
     {
         private IDictionary<string, long> counts = new Dictionary<string, long>();
 
-        protected override void Execute(StormTuple tuple)
+        public override void Execute(StormTuple tuple)
         {
             string word = tuple.Tuple[0].ToString();
 

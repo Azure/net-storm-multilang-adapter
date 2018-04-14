@@ -46,7 +46,7 @@ namespace Dotnet.Storm.Example
 
         private DateTime last;
 
-        protected override void Next()
+        public override void Next()
         {
             DateTime now = DateTime.Now;
 

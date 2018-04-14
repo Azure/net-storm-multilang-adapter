@@ -133,7 +133,7 @@ namespace Dotnet.Storm.Adapter.Components
         }
 
         #region Bolt interface
-        protected abstract void Execute(StormTuple tuple);
+        public abstract void Execute(StormTuple tuple);
 
         protected event EventHandler<EventArgs> OnTick;
 

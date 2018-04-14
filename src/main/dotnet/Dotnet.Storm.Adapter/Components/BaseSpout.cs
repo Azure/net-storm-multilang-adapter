@@ -65,7 +65,8 @@ namespace Dotnet.Storm.Adapter.Components
 
                     Channel.Instance.Send(message);
 
-                    PendingQueue.Set(id, message, policy);
+                    if (id != null && message != null && policy != null)
+                        PendingQueue.Set(id, message, policy);
                 }
             }
         }
@@ -213,7 +214,7 @@ namespace Dotnet.Storm.Adapter.Components
 
         protected bool IsEnabled { get; private set; } = false;
 
-        protected abstract void Next();
+        public abstract void Next();
         #endregion
     }
 }

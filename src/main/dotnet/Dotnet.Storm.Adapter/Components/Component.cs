@@ -107,23 +107,28 @@ namespace Dotnet.Storm.Adapter.Components
 
         protected string[] Arguments { get; private set; }
 
-        protected static IDictionary<string, object> Configuration { get; private set; }
+        public static IDictionary<string, object> Configuration { get; set; }
 
-        protected static StormContext Context { get; private set; }
+        public static StormContext Context { get; set; }
 
         protected static bool IsGuaranteed
         {
             get
             {
-                object number = Configuration["topology.acker.executors"];
-                if (number == null)
+                if (Configuration != null)
                 {
-                    return true;
+                    object number = Configuration["topology.acker.executors"];
+                    if (number == null)
+                    {
+                        return true;
+                    }
+
+                    if (int.TryParse(number.ToString(), out int result))
+                    {
+                        return result != 0;
+                    }
                 }
-                if (int.TryParse(number.ToString(), out int result))
-                {
-                    return result != 0;
-                }
+
                 return false;
             }
         }
