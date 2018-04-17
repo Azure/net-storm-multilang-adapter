@@ -18,10 +18,7 @@ namespace Dotnet.Storm.Adapter.Test
     {
         public static Component CreateComponent(Type type)
         {
-            Channel.Instance = new CacheChannel()
-            {
-                Serializer = new JsonSerializer()
-            };
+            Channel.Instance = new CacheChannel();
 
             Component comp = (Component)Activator.CreateInstance(type);
 
@@ -61,14 +58,11 @@ namespace Dotnet.Storm.Adapter.Test
             {
                 for (int i = 0; i < input.Count; i++)
                 {
-                    if (component is BaseBolt)
+                    ExecuteTuple et = new ExecuteTuple()
                     {
-                        ExecuteTuple et = new ExecuteTuple()
-                        {
-                            Tuple = input[i]
-                        };
-                        ((BaseBolt)component).Execute(new StormTuple(et));
-                    }
+                        Tuple = input[i]
+                    };
+                    ((BaseBolt)component).Execute(new StormTuple(et));
                 }
             }
         }

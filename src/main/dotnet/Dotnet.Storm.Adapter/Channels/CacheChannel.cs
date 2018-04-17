@@ -40,7 +40,7 @@ namespace Dotnet.Storm.Adapter.Channels
         {
             if (Cache.Count == 0)
             {
-                return new InMessage();
+                return null;
             }
             else
             {
