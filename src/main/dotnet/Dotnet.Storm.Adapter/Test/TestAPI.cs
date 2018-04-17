@@ -52,12 +52,18 @@ namespace Dotnet.Storm.Adapter.Test
             return res;
         }
 
-        public static void Run(Component component, List<List<Object>> input = null)
+        /// <summary>
+        /// Run a component in test mode
+        /// </summary>
+        /// <param name="component">component's name</param>
+        /// <param name="prev_component">Previous component's name, null if none</param>
+        public static void Run(Component component, Component prev_component)
         {
             if (component is BaseSpout)
                 ((BaseSpout)component).Next();
             else if (component is BaseBolt)
             {
+                List<List<Object>> input = DumpChannel(prev_component);
                 for (int i = 0; i < input.Count; i++)
                 {
                     ExecuteTuple et = new ExecuteTuple()
@@ -74,6 +80,11 @@ namespace Dotnet.Storm.Adapter.Test
             if (CacheChannel.IsEmpty() == true)
                 return true;
             return false;
+        }
+
+        public static int ChannelSize()
+        {
+            return CacheChannel.CacheSize();
         }
     }
 }

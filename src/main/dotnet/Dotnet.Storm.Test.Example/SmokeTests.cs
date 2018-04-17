@@ -3,6 +3,7 @@ using NUnit.Framework;
 using Dotnet.Storm.Example;
 using Dotnet.Storm.Adapter.Test;
 using Dotnet.Storm.Adapter.Components;
+using Dotnet.Storm.Adapter.Channels;
 using Dotnet.Storm.Adapter.Messaging;
 using System.Collections.Generic;
 
@@ -25,22 +26,22 @@ namespace Dotnet.Storm.Test.Example
             sc.StreamToOputputFields = new Dictionary<string, List<string>>();
             sc.StreamToOputputFields["default"] = new List<string>(new string[] { "default" });
 
-            // Create, and run a spout and dump its output
+            // Create, and run a spout
             BaseSpout es = (BaseSpout)TestAPI.CreateComponent(typeof(EmitSentence), sc, config);
-            TestAPI.Run(es);
-            List<List<Object>> es_output = TestAPI.DumpChannel(es);
-            Assert.IsNotEmpty(es_output);
+            TestAPI.Run(es, null);
+            Assert.True(TestAPI.ChannelSize() > 0);
 
-            // Create, and run 1st Bolt using spout's output and dump its output
+            // Create, and run 1st Bolt
             BaseBolt ss = (BaseBolt)TestAPI.CreateComponent(typeof(SplitSentence), sc, config);
-            TestAPI.Run(ss, es_output);
-            List<List<Object>> ss_output = TestAPI.DumpChannel(ss);
-            Assert.IsNotEmpty(ss_output);
+            TestAPI.Run(ss, es);
+            Assert.True(TestAPI.ChannelSize() > 0);
 
-            // Create, and run 2nd Bolt using 1st bolt's ouptut and dump its output
+            // Create, and run 2nd Bolt
             BaseBolt cw = (BaseBolt)TestAPI.CreateComponent(typeof(CountWords), sc, config);
-            TestAPI.Run(cw, ss_output);
+            TestAPI.Run(cw, ss);
+
             List<List<Object>> cw_output = TestAPI.DumpChannel(cw);
+            Assert.True(cw_output.Count == 0);
         }
     }
 }

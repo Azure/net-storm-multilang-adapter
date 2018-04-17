@@ -64,5 +64,10 @@ namespace Dotnet.Storm.Adapter.Channels
                 return true;
             return false;
         }
+
+        public static int CacheSize()
+        {
+            return Cache.Count;
+        }
     }
 }
