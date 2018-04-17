@@ -16,16 +16,18 @@ namespace Dotnet.Storm.Adapter.Test
 {
     public static class TestAPI
     {
-        public static Component CreateComponent(Type type)
+        public static Component CreateComponent(Type type, StormContext sc, Dictionary<string, object> config)
         {
+            // Create channel singleton
             Channel.Instance = new CacheChannel();
-
+            
+            // Create component instance
             Component comp = (Component)Activator.CreateInstance(type);
 
-            Component.Context = new StormContext();
-            Component.Context.StreamToOputputFields = new Dictionary<string, List<string>>();
-            Component.Context.StreamToOputputFields["default"] = new List<string>(new string[]{"default"});
-
+            // Set context and configuration singleton
+            Component.Context = sc;
+            Component.Configuration = config;
+        
             return comp;
         }
 
@@ -50,7 +52,7 @@ namespace Dotnet.Storm.Adapter.Test
             return res;
         }
 
-        public static void Process(Component component, List<List<Object>> input = null)
+        public static void Run(Component component, List<List<Object>> input = null)
         {
             if (component is BaseSpout)
                 ((BaseSpout)component).Next();
