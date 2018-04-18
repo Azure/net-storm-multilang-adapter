@@ -1,21 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using CommandLine;
 using Dotnet.Storm.Adapter.Channels;
 using Dotnet.Storm.Adapter.Components;
-using Dotnet.Storm.Adapter.Logging;
 using Dotnet.Storm.Adapter.Messaging;
-using Dotnet.Storm.Adapter.Serializers;
-using log4net;
-using log4net.Config;
-using log4net.Core;
 
 namespace Dotnet.Storm.Adapter.Test
 {
+    /// <summary>
+    /// Test API class is used to test Spout and Bolt components outside Storm
+    /// </summary>
     public static class TestAPI
     {
+        /// <summary>
+        /// Create an instance of the specified component type
+        /// </summary>
+        /// <param name="type">The component type</param>
+        /// <param name="sc">Storm context</param>
+        /// <param name="config">Storm configuration</param>
+        /// <returns></returns>
         public static Component CreateComponent(Type type, StormContext sc, Dictionary<string, object> config)
         {
             // Create channel singleton
@@ -32,7 +34,7 @@ namespace Dotnet.Storm.Adapter.Test
         }
 
         /// <summary>
-        /// Dump all messages out of channel
+        /// Dump all messages out of channel cache
         /// </summary>
         /// <returns></returns>
         public static List<List<Object>> DumpChannel()
@@ -58,8 +60,7 @@ namespace Dotnet.Storm.Adapter.Test
         /// <summary>
         /// Run a component in test mode
         /// </summary>
-        /// <param name="component">component's name</param>
-        /// <param name="prev_component">Previous component's name, null if none</param>
+        /// <param name="component">Teh component to be run</param>
         public static void Run(Component component)
         {
             if (component is BaseSpout)
