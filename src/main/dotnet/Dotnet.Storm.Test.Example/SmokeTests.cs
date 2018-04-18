@@ -28,19 +28,19 @@ namespace Dotnet.Storm.Test.Example
 
             // Create, and run a spout
             BaseSpout es = (BaseSpout)TestAPI.CreateComponent(typeof(EmitSentence), sc, config);
-            TestAPI.Run(es, null);
+            TestAPI.Run(es);
             Assert.True(TestAPI.ChannelSize() > 0);
 
             // Create, and run 1st Bolt
             BaseBolt ss = (BaseBolt)TestAPI.CreateComponent(typeof(SplitSentence), sc, config);
-            TestAPI.Run(ss, es);
+            TestAPI.Run(ss);
             Assert.True(TestAPI.ChannelSize() > 0);
 
             // Create, and run 2nd Bolt
             BaseBolt cw = (BaseBolt)TestAPI.CreateComponent(typeof(CountWords), sc, config);
-            TestAPI.Run(cw, ss);
+            TestAPI.Run(cw);
 
-            List<List<Object>> cw_output = TestAPI.DumpChannel(cw);
+            List<List<Object>> cw_output = TestAPI.DumpChannel();
             Assert.True(cw_output.Count == 0);
         }
     }

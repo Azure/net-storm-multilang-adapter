@@ -27,8 +27,6 @@ namespace Dotnet.Storm.Adapter.Channels
 {
     internal class CacheChannel : Channel
     {
-        private readonly static ILog Logger = LogManager.GetLogger(typeof(Channel));
-
         private static Queue<Message> Cache = new Queue<Message>();
 
         public override void Send(OutMessage message)
@@ -51,11 +49,6 @@ namespace Dotnet.Storm.Adapter.Channels
         public OutMessage OutputMessage()
         {
             return (OutMessage)Cache.Dequeue();
-        }
-
-        public void InputMessage(InMessage m)
-        {
-            Cache.Enqueue(m);
         }
 
         public static bool IsEmpty()

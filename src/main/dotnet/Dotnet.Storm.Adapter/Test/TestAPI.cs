@@ -31,21 +31,24 @@ namespace Dotnet.Storm.Adapter.Test
             return comp;
         }
 
-        public static List<List<Object>> DumpChannel(Component component)
+        /// <summary>
+        /// Dump all messages out of channel
+        /// </summary>
+        /// <returns></returns>
+        public static List<List<Object>> DumpChannel()
         {
             List <List<Object>> res = new List<List<Object>>();
 
             while (CacheChannel.IsEmpty() == false)
             {
-                if (component is BaseSpout)
+                OutMessage message = ((CacheChannel)Channel.Instance).OutputMessage();
+                if (message is SpoutTuple)
                 {
-                    SpoutTuple st = (SpoutTuple)((CacheChannel)Channel.Instance).OutputMessage();
-                    res.Add(st.Tuple);
+                    res.Add(((SpoutTuple)message).Tuple);
                 }
-                else if (component is BaseBolt)
+                else if (message is BoltTuple)
                 {
-                    BoltTuple st = (BoltTuple)((CacheChannel)Channel.Instance).OutputMessage();
-                    res.Add(st.Tuple);
+                    res.Add(((BoltTuple)message).Tuple);
                 }
             }
 
@@ -57,13 +60,13 @@ namespace Dotnet.Storm.Adapter.Test
         /// </summary>
         /// <param name="component">component's name</param>
         /// <param name="prev_component">Previous component's name, null if none</param>
-        public static void Run(Component component, Component prev_component)
+        public static void Run(Component component)
         {
             if (component is BaseSpout)
                 ((BaseSpout)component).Next();
             else if (component is BaseBolt)
             {
-                List<List<Object>> input = DumpChannel(prev_component);
+                List<List<Object>> input = DumpChannel();
                 for (int i = 0; i < input.Count; i++)
                 {
                     ExecuteTuple et = new ExecuteTuple()
