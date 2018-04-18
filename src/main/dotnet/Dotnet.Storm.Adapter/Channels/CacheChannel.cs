@@ -15,13 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
+
 using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using log4net;
 using Dotnet.Storm.Adapter.Messaging;
-using Dotnet.Storm.Adapter.Serializers;
 
 namespace Dotnet.Storm.Adapter.Channels
 {

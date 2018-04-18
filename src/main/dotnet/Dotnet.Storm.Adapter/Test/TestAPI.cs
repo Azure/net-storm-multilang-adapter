@@ -1,20 +1,30 @@
-﻿using System;
+﻿/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using CommandLine;
 using Dotnet.Storm.Adapter.Channels;
 using Dotnet.Storm.Adapter.Components;
-using Dotnet.Storm.Adapter.Logging;
 using Dotnet.Storm.Adapter.Messaging;
-using Dotnet.Storm.Adapter.Serializers;
-using log4net;
-using log4net.Config;
-using log4net.Core;
 
 namespace Dotnet.Storm.Adapter.Test
 {
-    public static class TestAPI
+    public static class TestApi
     {
         public static Component CreateComponent(Type type, StormContext sc, Dictionary<string, object> config)
         {
@@ -59,7 +69,6 @@ namespace Dotnet.Storm.Adapter.Test
         /// Run a component in test mode
         /// </summary>
         /// <param name="component">component's name</param>
-        /// <param name="prev_component">Previous component's name, null if none</param>
         public static void Run(Component component)
         {
             if (component is BaseSpout)
@@ -76,13 +85,6 @@ namespace Dotnet.Storm.Adapter.Test
                     ((BaseBolt)component).Execute(new StormTuple(et));
                 }
             }
-        }
-
-        public static bool IsChannelEmpty()
-        {
-            if (CacheChannel.IsEmpty() == true)
-                return true;
-            return false;
         }
 
         public static int ChannelSize()
