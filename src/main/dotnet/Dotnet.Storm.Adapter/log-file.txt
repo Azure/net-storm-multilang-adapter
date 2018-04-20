@@ -1,9 +1,2 @@
-2018-04-11 14:14:55,486 [1] DEBUG Dotnet.Storm.Adapter.Program [?] - Current working directory: C:\Sources\oizu\storm-multilang\dotnet\src\main\dotnet\Dotnet.Storm.Adapter.
-2018-04-11 14:14:55,516 [1] DEBUG Dotnet.Storm.Adapter.Program [?] - Loading assembly: Dotnet.Storm.Adapter.dll.
-2018-04-11 14:16:07,472 [1] DEBUG Dotnet.Storm.Adapter.Program [?] - Current working directory: C:\Sources\oizu\storm-multilang\dotnet\src\main\dotnet\Dotnet.Storm.Adapter.
-2018-04-11 14:16:13,512 [1] DEBUG Dotnet.Storm.Adapter.Program [?] - Loading assembly: Dotnet.Storm.Adapter.dll.
-2018-04-11 14:16:50,982 [1] DEBUG Dotnet.Storm.Adapter.Program [?] - Current working directory: C:\Sources\oizu\storm-multilang\dotnet\src\main\dotnet\Dotnet.Storm.Adapter.
-2018-04-11 14:17:07,895 [1] DEBUG Dotnet.Storm.Adapter.Program [?] - Loading assembly: bin\Debug\netcoreapp2.0\Dotnet.Storm.Adapter.dll.
-2018-04-11 14:17:15,151 [1] DEBUG Dotnet.Storm.Adapter.Program [?] - Trying to create instance of DebugComponent.
-2018-04-11 14:18:38,299 [1] DEBUG Dotnet.Storm.Adapter.Program [?] - Current working directory: C:\Sources\oizu\storm-multilang\dotnet\src\main\dotnet\Dotnet.Storm.Adapter.
-2018-04-11 14:18:43,334 [1] DEBUG Dotnet.Storm.Adapter.Program [?] - Trying to create instance of DebugComponent.
+2018-04-19 13:45:37,547 [1] DEBUG Dotnet.Storm.Adapter.Program [?] - Current working dir: C:\Sources\oizu\storm-multilang\dotnet\src\main\dotnet\Dotnet.Storm.Adapter.
+2018-04-19 13:46:07,203 [1] DEBUG Dotnet.Storm.Adapter.Program [?] - Initialize channel.

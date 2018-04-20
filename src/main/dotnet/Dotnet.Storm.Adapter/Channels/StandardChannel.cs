@@ -13,10 +13,15 @@ namespace Dotnet.Storm.Adapter.Channels
     {
         private readonly static ILog Logger = LogManager.GetLogger(typeof(Channel));
 
+        private static object syncRoot = new object();
+
         public override void Send(OutMessage message)
         {
-            Console.WriteLine(Serializer.Serialize(message));
-            Console.WriteLine("end");
+            lock(syncRoot)
+            {
+                Console.WriteLine(Serializer.Serialize(message));
+                Console.WriteLine("end");
+            }
         }
 
         public override InMessage Receive<T>()
