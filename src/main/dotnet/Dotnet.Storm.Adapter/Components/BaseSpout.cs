@@ -16,9 +16,8 @@ namespace Dotnet.Storm.Adapter.Components
 
         private const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 
-        //internal static MemoryCache PendingQueue = MemoryCache.Default;
-        //internal static CacheItemPolicy policy;
-        internal static IDictionary<string, OutMessage> PendingQueue = new Dictionary<string, OutMessage>();
+        internal static MemoryCache PendingQueue = MemoryCache.Default;
+        internal static CacheItemPolicy policy;
 
         private bool running = true;
 
@@ -51,8 +50,7 @@ namespace Dotnet.Storm.Adapter.Components
 
                     Channel.Instance.Send(message);
 
-                    PendingQueue.Add(id, message);
-                    //PendingQueue.Set(id, message, policy);
+                    PendingQueue.Set(id, message, policy);
                 }
             }
         }
@@ -60,10 +58,11 @@ namespace Dotnet.Storm.Adapter.Components
         internal override void Start()
         {
             OnInitialized?.Invoke(this, EventArgs.Empty);
-            //policy = new CacheItemPolicy()
-            //{
-            //    SlidingExpiration = new TimeSpan(0, 0, MessageTimeout)
-            //};
+
+            policy = new CacheItemPolicy()
+            {
+                SlidingExpiration = new TimeSpan(0, 0, MessageTimeout)
+            };
 
             while (running)
             {
@@ -124,7 +123,7 @@ namespace Dotnet.Storm.Adapter.Components
         {
             if (IsEnabled)
             {
-                if (PendingQueue.ContainsKey(id))
+                if (PendingQueue.Contains(id))
                 {
                     PendingQueue.Remove(id);
                 }
@@ -139,7 +138,7 @@ namespace Dotnet.Storm.Adapter.Components
         {
             if (IsEnabled)
             {
-                if (PendingQueue.ContainsKey(id))
+                if (PendingQueue.Contains(id))
                 {
                     if (PendingQueue[id] is SpoutTuple message)
                     {
