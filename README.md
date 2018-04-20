@@ -109,6 +109,7 @@ API
 
          protected abstract void Execute(StormTuple tuple);
 
+## Bolt specific
 - Events
 
         protected event EventHandler<EventArgs> OnTick;
