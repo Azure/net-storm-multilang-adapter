@@ -31,6 +31,15 @@ namespace Dotnet.Storm.Adapter.Components
             Tuple = tuple.Tuple;
         }
 
+        public StormTuple(string id, string component, string taskId, string stream, List<object> tuple)
+        {
+            Id = id;
+            Component = component;
+            TaskId = taskId;
+            Stream = stream;
+            Tuple = tuple;
+        }
+
         public string Id { get; internal set; }
 
         public string Component { get; internal set; }

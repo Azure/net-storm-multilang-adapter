@@ -52,54 +52,27 @@ namespace Dotnet.Storm.Adapter.Test
         }
 
         /// <summary>
-        /// Dump all messages out of channel cache
+        /// Dump all tuples out of channel cache
         /// </summary>
         /// <returns></returns>
-        public static List<List<Object>> DumpChannel()
+        public static List<TestOutput> DumpChannel()
         {
-            List <List<Object>> res = new List<List<Object>>();
+            List<TestOutput> res = new List<TestOutput>();
 
             while (CacheChannel.IsEmpty() == false)
             {
                 OutMessage message = ((CacheChannel)Channel.Instance).OutputMessage();
                 if (message is SpoutTuple)
                 {
-                    res.Add(((SpoutTuple)message).Tuple);
+                    res.Add(new SpoutOutput((SpoutTuple)message));
                 }
                 else if (message is BoltTuple)
                 {
-                    res.Add(((BoltTuple)message).Tuple);
+                    res.Add(new BoltOutput((BoltTuple)message));
                 }
             }
 
             return res;
-        }
-
-        /// <summary>
-        /// Run a component in test mode
-        /// </summary>
-        /// <param name="component">The component to be run</param>
-        public static void Run(Component component)
-        {
-            if (component is BaseSpout)
-                ((BaseSpout)component).Next();
-            else if (component is BaseBolt)
-            {
-                List<List<Object>> input = DumpChannel();
-                for (int i = 0; i < input.Count; i++)
-                {
-                    ExecuteTuple et = new ExecuteTuple()
-                    {
-                        Tuple = input[i]
-                    };
-                    ((BaseBolt)component).Execute(new StormTuple(et));
-                }
-            }
-        }
-
-        public static int ChannelSize()
-        {
-            return CacheChannel.CacheSize();
         }
     }
 }

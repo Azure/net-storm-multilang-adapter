@@ -21,6 +21,7 @@ using NUnit.Framework;
 using Dotnet.Storm.Example;
 using Dotnet.Storm.Adapter.Test;
 using Dotnet.Storm.Adapter.Components;
+using Dotnet.Storm.Adapter.Messaging;
 using System.Collections.Generic;
 
 namespace Dotnet.Storm.Test.Example
@@ -44,20 +45,31 @@ namespace Dotnet.Storm.Test.Example
 
             // Create, and run a spout
             BaseSpout es = (BaseSpout)TestApi.CreateComponent(typeof(EmitSentence), sc, config);
-            TestApi.Run(es);
-            Assert.True(TestApi.ChannelSize() > 0);
+            es.Next();
+            List<TestOutput> res = TestApi.DumpChannel();
+            // Verify results and metadata
+            Assert.True(res.Count > 0);
+            Assert.True(res[0].Stream == "default");
 
             // Create, and run 1st Bolt
             BaseBolt ss = (BaseBolt)TestApi.CreateComponent(typeof(SplitSentence), sc, config);
-            TestApi.Run(ss);
-            Assert.True(TestApi.ChannelSize() > 0);
+            for (int i = 0; i < res.Count; i++)
+            {
+                StormTuple st = new StormTuple(((SpoutOutput)res[0]).Id, "EmitSentence", "TaskId", res[0].Stream, res[0].Tuple);
+                ss.Execute(st);
+            }
+            res = TestApi.DumpChannel();
+            // Verify results and metadata
+            Assert.True(res.Count > 0);
+            Assert.True(res[0].Stream == "default");
 
             // Create, and run 2nd Bolt
             BaseBolt cw = (BaseBolt)TestApi.CreateComponent(typeof(CountWords), sc, config);
-            TestApi.Run(cw);
-
-            List<List<Object>> cw_output = TestApi.DumpChannel();
-            Assert.True(cw_output.Count == 0);
+            for (int i = 0; i < res.Count; i++)
+            {
+                StormTuple st = new StormTuple("id", "SplitSentence", "TaskId", res[0].Stream, res[0].Tuple);
+                cw.Execute(st);
+            }
         }
     }
 }
