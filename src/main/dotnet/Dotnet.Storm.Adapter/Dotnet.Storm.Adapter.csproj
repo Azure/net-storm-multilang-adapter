@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Platform>x64</Platform>  
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet">
@@ -13,27 +14,32 @@
     <Description>A dotnet core adapter for apache storm multilang protocol.</Description>
     <PackageTags>apache;storm;storm-multilang;storm-dotnet-adapter;dotnet-core-adapter</PackageTags>
 
-    <VersionPrefix>1.0.1</VersionPrefix>
-    <Version>1.0.1</Version>
-    <FileVersion>1.0.1.1917</FileVersion>
+    <VersionPrefix>1.0.12</VersionPrefix>
+    <Version>1.0.12</Version>
+    <FileVersion>1.0.12.2917</FileVersion>
 
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Yuriy Alikin</Authors>
     <Company>Microsoft</Company>
-    <Copyright>Copyright © Apache 2018</Copyright>
+    <Copyright>Copyright (c) Microsoft Corporation. All Rights Reserved</Copyright>
 
     <RepositoryType>git</RepositoryType>
 
     <PackageIconUrl>http://storm.apache.org/images/logo.png</PackageIconUrl>
-    <PackageProjectUrl>http://storm.apache.org/</PackageProjectUrl>
-    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</PackageLicenseUrl>
-    <RepositoryUrl>https://github.com/apache/storm</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Azure/net-storm-multilang-adapter</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/Azure/net-storm-multilang-adapter/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Azure/net-storm-multilang-adapter</RepositoryUrl>
 
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <SignAssembly>False</SignAssembly>
+    <AssemblyVersion>1.0.12.0</AssemblyVersion>
 
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Include="$(ProjectRuntimeConfigFilePath)" Pack="true" />
+  </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.2.1" />
     <PackageReference Include="log4net" Version="2.0.8" />

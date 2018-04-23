@@ -1,20 +1,6 @@
-﻿/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 using Dotnet.Storm.Adapter.Channels;
 using Dotnet.Storm.Adapter.Messaging;
 using System;
@@ -31,7 +17,6 @@ namespace Dotnet.Storm.Adapter.Components
         private const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 
         internal static MemoryCache PendingQueue = MemoryCache.Default;
-
         internal static CacheItemPolicy policy;
 
         private bool running = true;
@@ -73,6 +58,8 @@ namespace Dotnet.Storm.Adapter.Components
 
         internal override void Start()
         {
+            OnInitialized?.Invoke(this, EventArgs.Empty);
+
             policy = new CacheItemPolicy()
             {
                 SlidingExpiration = new TimeSpan(0, 0, MessageTimeout)
@@ -154,7 +141,7 @@ namespace Dotnet.Storm.Adapter.Components
             {
                 if (PendingQueue.Contains(id))
                 {
-                    if (PendingQueue.Get(id) is SpoutTuple message)
+                    if (PendingQueue[id] is SpoutTuple message)
                     {
                         Channel.Instance.Send(message);
                     }
@@ -206,6 +193,8 @@ namespace Dotnet.Storm.Adapter.Components
         }
 
         #region Spout interface
+        protected event EventHandler OnInitialized;
+
         protected event EventHandler OnActivate;
 
         protected event EventHandler OnDeactivate;

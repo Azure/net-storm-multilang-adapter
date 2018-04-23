@@ -1,0 +1,2 @@
+2018-04-19 13:45:37,547 [1] DEBUG Dotnet.Storm.Adapter.Program [?] - Current working dir: C:\Sources\oizu\storm-multilang\dotnet\src\main\dotnet\Dotnet.Storm.Adapter.
+2018-04-19 13:46:07,203 [1] DEBUG Dotnet.Storm.Adapter.Program [?] - Initialize channel.
