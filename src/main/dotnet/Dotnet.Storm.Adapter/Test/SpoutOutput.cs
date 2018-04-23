@@ -9,13 +9,13 @@ namespace Dotnet.Storm.Adapter.Test
     {
         public string Id { get; set; }
    
-        internal SpoutOutput(SpoutTuple bt)
+        internal SpoutOutput(SpoutTuple st)
         {
-            Id = bt.Id;
-            this.Stream = bt.Stream;
-            this.Task = bt.Task;
-            this.Tuple = bt.Tuple;
-            this.NeedTaskIds = bt.NeedTaskIds;
+            Id = st.Id;
+            this.Stream = st.Stream;
+            this.Task = st.Task;
+            this.Tuple = st.Tuple;
+            this.NeedTaskIds = st.NeedTaskIds;
         }
     }
 }
