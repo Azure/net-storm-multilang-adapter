@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Dotnet.Storm.Adapter.Messaging;
+﻿using System.Collections.Generic;
 
 namespace Dotnet.Storm.Adapter.Test
 {

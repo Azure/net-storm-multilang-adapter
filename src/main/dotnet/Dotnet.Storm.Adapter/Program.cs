@@ -16,8 +16,6 @@
  * limitations under the License.
  */
 using log4net;
-using log4net.Config;
-using log4net.Core;
 
 namespace Dotnet.Storm.Adapter
 {

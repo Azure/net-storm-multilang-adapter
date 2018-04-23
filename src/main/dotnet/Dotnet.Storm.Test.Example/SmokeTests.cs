@@ -16,12 +16,10 @@
  * limitations under the License.
  */
 
-using System;
 using NUnit.Framework;
 using Dotnet.Storm.Example;
 using Dotnet.Storm.Adapter.Test;
 using Dotnet.Storm.Adapter.Components;
-using Dotnet.Storm.Adapter.Messaging;
 using System.Collections.Generic;
 
 namespace Dotnet.Storm.Test.Example
@@ -33,13 +31,12 @@ namespace Dotnet.Storm.Test.Example
         {
             // Initialize configuration
             Dictionary<string, object> config = new Dictionary<string, object>();
-            config["azure.spout.emit.frequency"] = "";
-            config["azure.service.name"] = "example";
-            config["azure.bolt.cache.span"] = "";
-            config["topology.acker.executors"] = "0";
+            config["configkey1"] = "configvalue1";
+            config["configkey2"] = "configvalue2";
 
             // Initialize context
             StormContext sc = new StormContext();
+            sc.ComponentId = "componentid1";
             sc.StreamToOputputFields = new Dictionary<string, List<string>>();
             sc.StreamToOputputFields["default"] = new List<string>(new string[] { "default" });
 
@@ -53,9 +50,9 @@ namespace Dotnet.Storm.Test.Example
 
             // Create, and run 1st Bolt
             BaseBolt ss = (BaseBolt)TestApi.CreateComponent(typeof(SplitSentence), sc, config);
-            for (int i = 0; i < res.Count; i++)
+            foreach (var output in res)
             {
-                StormTuple st = new StormTuple(((SpoutOutput)res[0]).Id, "EmitSentence", "TaskId", res[0].Stream, res[0].Tuple);
+                StormTuple st = new StormTuple(((SpoutOutput)output).Id, "EmitSentence", "TaskId", output.Stream, output.Tuple);
                 ss.Execute(st);
             }
             res = TestApi.DumpChannel();
@@ -65,9 +62,9 @@ namespace Dotnet.Storm.Test.Example
 
             // Create, and run 2nd Bolt
             BaseBolt cw = (BaseBolt)TestApi.CreateComponent(typeof(CountWords), sc, config);
-            for (int i = 0; i < res.Count; i++)
+            foreach (var output in res)
             {
-                StormTuple st = new StormTuple("id", "SplitSentence", "TaskId", res[0].Stream, res[0].Tuple);
+                StormTuple st = new StormTuple("id", "SplitSentence", "TaskId", output.Stream, output.Tuple);
                 cw.Execute(st);
             }
         }
