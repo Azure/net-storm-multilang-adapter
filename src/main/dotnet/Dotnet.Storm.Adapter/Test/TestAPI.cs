@@ -38,7 +38,7 @@ namespace Dotnet.Storm.Adapter.Test
         /// Dump all tuples out of channel cache
         /// </summary>
         /// <returns></returns>
-        public static List<TestOutput> DumpChannel(Component c)
+        public static List<TestOutput> GetOutput(this Component c)
         {
             List<TestOutput> res = new List<TestOutput>();
             CacheChannel comp_channel = (CacheChannel)c.Channel;
