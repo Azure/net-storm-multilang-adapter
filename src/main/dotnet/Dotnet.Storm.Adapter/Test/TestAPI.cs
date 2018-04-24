@@ -38,20 +38,21 @@ namespace Dotnet.Storm.Adapter.Test
         /// Dump all tuples out of channel cache
         /// </summary>
         /// <returns></returns>
-        public static List<TestOutput> DumpChannel()
+        public static List<TestOutput> DumpChannel(Component c)
         {
             List<TestOutput> res = new List<TestOutput>();
+            CacheChannel comp_channel = (CacheChannel)c.Channel;
 
-            while (CacheChannel.IsEmpty() == false)
+            while (comp_channel.IsEmpty() == false)
             {
-                OutMessage message = ((CacheChannel)Channel.Instance).OutputMessage();
+                OutMessage message = comp_channel.OutputMessage();
                 if (message is SpoutTuple)
                 {
-                    res.Add(new SpoutOutput((SpoutTuple)message));
+                    res.Add(new SpoutOutput((SpoutTuple)message, c.Context.ComponentId));
                 }
                 else if (message is BoltTuple)
                 {
-                    res.Add(new BoltOutput((BoltTuple)message));
+                    res.Add(new BoltOutput((BoltTuple)message, c.Context.ComponentId));
                 }
             }
 

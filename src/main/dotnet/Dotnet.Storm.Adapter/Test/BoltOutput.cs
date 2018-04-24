@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using Dotnet.Storm.Adapter.Messaging;
-using Dotnet.Storm.Adapter.Components;
 
 namespace Dotnet.Storm.Adapter.Test
 {
@@ -11,13 +10,14 @@ namespace Dotnet.Storm.Adapter.Test
     {
         public List<string> Anchors { get; set; }
 
-        internal BoltOutput(BoltTuple bt)
+        internal BoltOutput(BoltTuple bt, string compId)
         {
             Anchors = bt.Anchors;
-            Stream = bt.Stream;
-            Task = bt.Task;
-            Tuple = bt.Tuple;
-            NeedTaskIds = bt.NeedTaskIds;
+            this.ComponentId = compId;
+            this.Stream = bt.Stream;
+            this.Task = bt.Task;
+            this.Tuple = bt.Tuple;
+            this.NeedTaskIds = bt.NeedTaskIds;
         }
     }
 }

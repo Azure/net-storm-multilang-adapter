@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 using Dotnet.Storm.Adapter.Messaging;
-using Dotnet.Storm.Adapter.Components;
 
 namespace Dotnet.Storm.Adapter.Test
 {
@@ -10,9 +9,10 @@ namespace Dotnet.Storm.Adapter.Test
     {
         public string Id { get; set; }
    
-        internal SpoutOutput(SpoutTuple st)
+        internal SpoutOutput(SpoutTuple st, string compId)
         {
             Id = st.Id;
+            this.ComponentId = compId;
             this.Stream = st.Stream;
             this.Task = st.Task;
             this.Tuple = st.Tuple;
