@@ -47,6 +47,7 @@ namespace Dotnet.Storm.Test.Example
             // Verify results and metadata
             Assert.True(res.Count > 0);
             Assert.True(res[0].Stream == "default");
+            Assert.True(res[0].ComponentId == "componentid1");
 
             // Create, and run 1st Bolt
             BaseBolt ss = (BaseBolt)TestApi.CreateComponent(typeof(SplitSentence), sc, config);

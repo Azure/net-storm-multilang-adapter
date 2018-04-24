@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Dotnet.Storm.Adapter.Messaging;
+using Dotnet.Storm.Adapter.Components;
 
 namespace Dotnet.Storm.Adapter.Test
 {
@@ -14,6 +15,7 @@ namespace Dotnet.Storm.Adapter.Test
             this.Task = bt.Task;
             this.Tuple = bt.Tuple;
             this.NeedTaskIds = bt.NeedTaskIds;
+            this.ComponentId = Component.Context.ComponentId;
         }
     }
 }

@@ -4,6 +4,8 @@ namespace Dotnet.Storm.Adapter.Test
 {
     public class TestOutput
     {
+        public string ComponentId { get; set; }
+
         public long Task { get; set; }
 
         public string Stream { get; set; }
