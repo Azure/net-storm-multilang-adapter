@@ -15,22 +15,22 @@ namespace Dotnet.Storm.Adapter.Components
     public abstract class Component
     {
         #region Component interface
-        public void Sync()
+        protected void Sync()
         {
             Channel.Send(new SyncMessage());
         }
 
-        public void Error(string message)
+        protected void Error(string message)
         {
             Channel.Send(new ErrorMessage(message));
         }
 
-        public void Metrics(string name, object value)
+        protected void Metrics(string name, object value)
         {
             Channel.Send(new MetricMessage(name, value));
         }
 
-        public VerificationResult VerifyInput(string component, string stream, List<object> tuple)
+        protected VerificationResult VerifyInput(string component, string stream, List<object> tuple)
         {
             if(stream == "__heartbeat" || stream == "__tick")
             {
@@ -64,7 +64,7 @@ namespace Dotnet.Storm.Adapter.Components
             return new VerificationResult(false, "Input: OK");
         }
 
-        public VerificationResult VerifyOutput(string stream, List<object> tuple)
+        protected VerificationResult VerifyOutput(string stream, List<object> tuple)
         {
             if (string.IsNullOrEmpty(stream))
             {

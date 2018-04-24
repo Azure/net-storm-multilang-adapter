@@ -10,17 +10,17 @@ namespace Dotnet.Storm.Adapter.Components
 {
     public abstract class BaseBolt : Component
     {
-        public void Ack(string id)
+        protected void Ack(string id)
         {
             Channel.Send(new AckMessage(id));
         }
 
-        public void Fail(string id)
+        protected void Fail(string id)
         {
             Channel.Send(new FailMessage(id));
         }
 
-        public void Emit(List<object> tuple, string stream = "default", long task = 0, List<string> anchors = null, bool needTaskIds = false)
+        protected void Emit(List<object> tuple, string stream = "default", long task = 0, List<string> anchors = null, bool needTaskIds = false)
         {
             VerificationResult result = VerifyOutput(stream, tuple);
 
