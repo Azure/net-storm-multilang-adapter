@@ -38,7 +38,7 @@ namespace Dotnet.Storm.Example
 
             if ((now - last).Seconds > 20)
             {
-                Storm.Emit(new List<object>() { sentences[random.Next(9)] });
+                Emit(new List<object>() { sentences[random.Next(9)] });
                 last = now;
             }
         }

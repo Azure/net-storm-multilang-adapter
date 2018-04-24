@@ -9,7 +9,7 @@ namespace Dotnet.Storm.Adapter.Channels
 {
     internal class CacheChannel : Channel
     {
-        private static Queue<Message> Cache = new Queue<Message>();
+        private Queue<Message> Cache = new Queue<Message>();
 
         public override void Send(OutMessage message)
         {
@@ -26,16 +26,11 @@ namespace Dotnet.Storm.Adapter.Channels
             return (OutMessage)Cache.Dequeue();
         }
 
-        public static bool IsEmpty()
+        public bool IsEmpty()
         {
             if (Cache.Count == 0)
                 return true;
             return false;
-        }
-
-        public static int CacheSize()
-        {
-            return Cache.Count;
         }
     }
 }
