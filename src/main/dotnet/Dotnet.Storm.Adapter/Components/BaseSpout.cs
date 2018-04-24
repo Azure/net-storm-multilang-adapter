@@ -16,12 +16,13 @@ namespace Dotnet.Storm.Adapter.Components
 
         private const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 
-        internal static MemoryCache PendingQueue = MemoryCache.Default;
-        internal static CacheItemPolicy policy;
+        private MemoryCache PendingQueue = MemoryCache.Default;
+
+        private CacheItemPolicy policy;
 
         private bool running = true;
 
-        public void Emit(List<object> tuple, string stream = "default", long task = 0, bool needTaskIds = false)
+        protected void Emit(List<object> tuple, string stream = "default", long task = 0, bool needTaskIds = false)
         {
             string id = null;
             if (IsGuaranteed)
