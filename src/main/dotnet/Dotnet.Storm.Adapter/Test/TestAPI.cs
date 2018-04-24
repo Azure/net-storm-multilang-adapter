@@ -21,10 +21,10 @@ namespace Dotnet.Storm.Adapter.Test
         /// <param name="sc">Storm context</param>
         /// <param name="config">Storm configuration</param>
         /// <returns></returns>
-        public static Component CreateComponent(Type type, StormContext sc, Dictionary<string, object> config)
+        public static T CreateComponent<T>(StormContext sc, Dictionary<string, object> config) where T : Component
         {
             // Create component instance
-            Component comp = (Component)Activator.CreateInstance(type);
+            T comp = (T)Activator.CreateInstance(typeof(T));
 
             // Set context and configuration singleton
             comp.Context = sc;

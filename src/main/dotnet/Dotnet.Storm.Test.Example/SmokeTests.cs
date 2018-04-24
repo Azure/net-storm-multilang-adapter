@@ -46,7 +46,7 @@ namespace Dotnet.Storm.Test.Example
             StormContext sc = GetContext();
 
             // Create, and run a spout
-            EmitSentence es = (EmitSentence)TestApi.CreateComponent(typeof(EmitSentence), sc, config);
+            EmitSentence es = TestApi.CreateComponent<EmitSentence>(sc, config);
             es.Next();
             List<TestOutput> res = es.GetOutput();
 
@@ -57,7 +57,7 @@ namespace Dotnet.Storm.Test.Example
 
             // Create, and run 1st Bolt
             sc.ComponentId = "componentid2";
-            SplitSentence ss = (SplitSentence)TestApi.CreateComponent(typeof(SplitSentence), sc, config);
+            SplitSentence ss = TestApi.CreateComponent<SplitSentence>(sc, config);
             foreach (var output in res)
             {
                 ss.Execute(new StormTuple(((SpoutOutput)output).Id, "EmitSentence", "TaskId", output.Stream, output.Tuple));
@@ -70,7 +70,7 @@ namespace Dotnet.Storm.Test.Example
 
             // Create, and run 2nd Bolt
             sc.ComponentId = "componentid3";
-            BaseBolt cw = (BaseBolt)TestApi.CreateComponent(typeof(CountWords), sc, config);
+            CountWords cw = TestApi.CreateComponent<CountWords>(sc, config);
             foreach (var output in res)
             {
                 cw.Execute(new StormTuple("id", "SplitSentence", "TaskId", output.Stream, output.Tuple));
