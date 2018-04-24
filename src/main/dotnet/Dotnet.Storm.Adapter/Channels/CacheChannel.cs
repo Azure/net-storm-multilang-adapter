@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+using System;
 using System.Collections.Generic;
 using Dotnet.Storm.Adapter.Messaging;
 
@@ -17,14 +18,7 @@ namespace Dotnet.Storm.Adapter.Channels
 
         public override InMessage Receive<T>()
         {
-            if (Cache.Count == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return (InMessage)Cache.Dequeue();
-            }
+            throw new NotImplementedException();
         }
 
         public OutMessage OutputMessage()
