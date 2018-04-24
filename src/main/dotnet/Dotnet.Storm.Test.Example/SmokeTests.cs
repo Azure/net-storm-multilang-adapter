@@ -1,5 +1,4 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
+// Licensed to the Apache Software Foundation (ASF) under one
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
@@ -28,7 +27,7 @@ namespace Dotnet.Storm.Test.Example
             sc.StreamToOputputFields["default"] = new List<string>(new string[] { "default" });
 
             // Create, and run a spout
-            BaseSpout es = (BaseSpout)TestApi.CreateComponent(typeof(EmitSentence), sc, config);
+            EmitSentence es = (EmitSentence)TestApi.CreateComponent(typeof(EmitSentence), sc, config);
             es.Next();
             List<TestOutput> res = TestApi.DumpChannel();
             // Verify results and metadata

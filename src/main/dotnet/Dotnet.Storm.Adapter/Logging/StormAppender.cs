@@ -13,6 +13,8 @@ namespace Dotnet.Storm.Adapter.Logging
     {
         internal bool Enabled { get; set; }
 
+        internal Channel Channel { get; set; }
+
         protected override void Append(LoggingEvent loggingEvent)
         {
             if (Enabled)
@@ -20,7 +22,7 @@ namespace Dotnet.Storm.Adapter.Logging
                 string message = RenderLoggingEvent(loggingEvent);
                 LogLevel level = GetStormLevel(loggingEvent.Level);
 
-                Channel.Instance.Send(new LogMessage(message, level));
+                Channel.Send(new LogMessage(message, level));
             }
         }
 
@@ -73,14 +75,6 @@ namespace Dotnet.Storm.Adapter.Logging
                 default:
                     return Level.Info;
             }
-        }
-    }
-
-    public static class ILogEx
-    {
-        public static void Metrics(this ILog log, string name, object value)
-        {
-            Channel.Instance.Send(new MetricMessage(name, value));
         }
     }
 }

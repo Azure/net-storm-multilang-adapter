@@ -17,7 +17,6 @@ namespace Dotnet.Storm.Adapter.Test
             this.Task = st.Task;
             this.Tuple = st.Tuple;
             this.NeedTaskIds = st.NeedTaskIds;
-            this.ComponentId = Component.Context.ComponentId;
         }
     }
 }

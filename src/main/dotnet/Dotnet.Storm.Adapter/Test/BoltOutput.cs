@@ -14,11 +14,10 @@ namespace Dotnet.Storm.Adapter.Test
         internal BoltOutput(BoltTuple bt)
         {
             Anchors = bt.Anchors;
-            this.Stream = bt.Stream;
-            this.Task = bt.Task;
-            this.Tuple = bt.Tuple;
-            this.NeedTaskIds = bt.NeedTaskIds;
-            this.ComponentId = Component.Context.ComponentId;
+            Stream = bt.Stream;
+            Task = bt.Task;
+            Tuple = bt.Tuple;
+            NeedTaskIds = bt.NeedTaskIds;
         }
     }
 }

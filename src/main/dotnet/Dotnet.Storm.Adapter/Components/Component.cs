@@ -15,89 +15,88 @@ namespace Dotnet.Storm.Adapter.Components
     public abstract class Component
     {
         #region Component interface
-        protected class Storm
+        public void Sync()
         {
-            public static void Sync()
-            {
-                Channel.Instance.Send(new SyncMessage());
-            }
+            Channel.Send(new SyncMessage());
+        }
 
-            public static void Error(string message)
-            {
-                Channel.Instance.Send(new ErrorMessage(message));
-            }
+        public void Error(string message)
+        {
+            Channel.Send(new ErrorMessage(message));
+        }
 
-            public static void Metrics(string name, object value)
-            {
-                Channel.Instance.Send(new MetricMessage(name, value));
-            }
+        public void Metrics(string name, object value)
+        {
+            Channel.Send(new MetricMessage(name, value));
+        }
 
-            public static VerificationResult VerifyInput(string component, string stream, List<object> tuple)
+        public VerificationResult VerifyInput(string component, string stream, List<object> tuple)
+        {
+            if(stream == "__heartbeat" || stream == "__tick")
             {
-                if(stream == "__heartbeat" || stream == "__tick")
-                {
-                    return new VerificationResult(false, "Input: OK");
-                }
-                if (string.IsNullOrEmpty(component))
-                {
-                    return new VerificationResult(true, "Input: component is null");
-                }
-                if (string.IsNullOrEmpty(stream))
-                {
-                    return new VerificationResult(true, "Input: stream is null");
-                }
-                if (tuple == null)
-                {
-                    return new VerificationResult(true, "Input: tuple is null");
-                }
-                if (!Context.SourceToStreamToFields.ContainsKey(component))
-                {
-                    return new VerificationResult(true, $"Input: component '{component}' is not defined as an input");
-                }
-                if (!Context.SourceToStreamToFields[component].ContainsKey(stream))
-                { 
-                    return new VerificationResult(true, $"Input: component '{component}' doesn't contain '{stream}' stream");
-                }
-                int count = Context.SourceToStreamToFields[component][stream].Count;
-                if (count != tuple.Count)
-                {
-                    return new VerificationResult(true, $"Input: tuple contains [{tuple.Count}] fields but the {stream} stream can process only [{count}]");
-                }
                 return new VerificationResult(false, "Input: OK");
             }
-
-            public static VerificationResult VerifyOutput(string stream, List<object> tuple)
+            if (string.IsNullOrEmpty(component))
             {
-                if (string.IsNullOrEmpty(stream))
-                {
-                    return new VerificationResult(true, "Output: stream is null");
-                }
-                if (tuple == null)
-                {
-                    return new VerificationResult(true, "Output: tuple is null");
-                }
-                if (!Context.StreamToOputputFields.ContainsKey(stream))
-                {
-                    return new VerificationResult(true, $"Output: component doesn't contain {stream} stream");
-                }
-                int count = Context.StreamToOputputFields[stream].Count;
-                if (count != tuple.Count)
-                {
-                    return new VerificationResult(true, $"Output: tuple contains [{tuple.Count}] fields but the {stream} stream can process only [{count}]");
-                }
-                return new VerificationResult(false, "Output: OK");
+                return new VerificationResult(true, "Input: component is null");
             }
+            if (string.IsNullOrEmpty(stream))
+            {
+                return new VerificationResult(true, "Input: stream is null");
+            }
+            if (tuple == null)
+            {
+                return new VerificationResult(true, "Input: tuple is null");
+            }
+            if (!Context.SourceToStreamToFields.ContainsKey(component))
+            {
+                return new VerificationResult(true, $"Input: component '{component}' is not defined as an input");
+            }
+            if (!Context.SourceToStreamToFields[component].ContainsKey(stream))
+            { 
+                return new VerificationResult(true, $"Input: component '{component}' doesn't contain '{stream}' stream");
+            }
+            int count = Context.SourceToStreamToFields[component][stream].Count;
+            if (count != tuple.Count)
+            {
+                return new VerificationResult(true, $"Input: tuple contains [{tuple.Count}] fields but the {stream} stream can process only [{count}]");
+            }
+            return new VerificationResult(false, "Input: OK");
+        }
+
+        public VerificationResult VerifyOutput(string stream, List<object> tuple)
+        {
+            if (string.IsNullOrEmpty(stream))
+            {
+                return new VerificationResult(true, "Output: stream is null");
+            }
+            if (tuple == null)
+            {
+                return new VerificationResult(true, "Output: tuple is null");
+            }
+            if (!Context.StreamToOputputFields.ContainsKey(stream))
+            {
+                return new VerificationResult(true, $"Output: component doesn't contain {stream} stream");
+            }
+            int count = Context.StreamToOputputFields[stream].Count;
+            if (count != tuple.Count)
+            {
+                return new VerificationResult(true, $"Output: tuple contains [{tuple.Count}] fields but the {stream} stream can process only [{count}]");
+            }
+            return new VerificationResult(false, "Output: OK");
         }
 
         protected readonly static ILog Logger = LogManager.GetLogger(typeof(Component));
 
         protected string[] Arguments { get; private set; }
 
-        public static IDictionary<string, object> Configuration { get; set; }
+        public IDictionary<string, object> Configuration { get; internal set; }
 
-        public static StormContext Context { get; set; }
+        public StormContext Context { get; internal set; }
 
-        protected static bool IsGuaranteed
+        internal Channel Channel { get; set; }
+
+        protected bool IsGuaranteed
         {
             get
             {
@@ -120,7 +119,7 @@ namespace Dotnet.Storm.Adapter.Components
             }
         }
 
-        protected static int MessageTimeout
+        protected int MessageTimeout
         {
             get
             {
@@ -157,7 +156,7 @@ namespace Dotnet.Storm.Adapter.Components
         {
             // waiting for storm to send connect message
             Logger.Debug("Waiting for connect message.");
-            ConnectMessage message = (ConnectMessage)Channel.Instance.Receive<ConnectMessage>();
+            ConnectMessage message = (ConnectMessage)Channel.Receive<ConnectMessage>();
 
             int pid = Process.GetCurrentProcess().Id;
 
@@ -176,7 +175,7 @@ namespace Dotnet.Storm.Adapter.Components
             Configuration = message.Configuration;
 
             // send PID back to storm
-            Channel.Instance.Send(new PidMessage(pid));
+            Channel.Send(new PidMessage(pid));
         }
 
         internal abstract void Start();

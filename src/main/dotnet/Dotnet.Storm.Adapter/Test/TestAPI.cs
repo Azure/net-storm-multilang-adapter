@@ -23,16 +23,14 @@ namespace Dotnet.Storm.Adapter.Test
         /// <returns></returns>
         public static Component CreateComponent(Type type, StormContext sc, Dictionary<string, object> config)
         {
-            // Create channel singleton
-            Channel.Instance = new CacheChannel();
-            
             // Create component instance
             Component comp = (Component)Activator.CreateInstance(type);
 
             // Set context and configuration singleton
-            Component.Context = sc;
-            Component.Configuration = config;
-        
+            comp.Context = sc;
+            comp.Configuration = config;
+            comp.Channel = new CacheChannel();
+
             return comp;
         }
 

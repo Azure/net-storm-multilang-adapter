@@ -29,7 +29,7 @@ namespace Dotnet.Storm.Example
                 {
                     if(!string.IsNullOrEmpty(word))
                     {
-                        Storm.Emit(new List<object> { word.Trim(trimChars) }, "default", 0, new List<string>() { tuple.Id }, true);
+                        LocalStorm.Emit(new List<object> { word.Trim(trimChars) }, "default", 0, new List<string>() { tuple.Id }, true);
                     }
                 }
             }

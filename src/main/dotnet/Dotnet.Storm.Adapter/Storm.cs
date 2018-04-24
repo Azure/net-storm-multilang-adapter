@@ -40,15 +40,15 @@ namespace Dotnet.Storm.Adapter
 
             Logger.Debug($"Current working dir: {Environment.CurrentDirectory}.");
 
-            Logger.Debug($"Initialize channel.");
-            Channel.Instance = new StandardChannel { Serializer = new JsonSerializer() };
-
             Logger.Debug($"Loading assembly: {assemblyName}.");
             Assembly assembly = GetAssembly(assemblyName);
             Type type = assembly.GetType(className, true);
 
             Logger.Debug($"Trying to create instance of {type.Name}.");
             Component component = (Component)Activator.CreateInstance(type);
+
+            Logger.Debug($"Initialize channel.");
+            component.Channel = new StandardChannel { Serializer = new JsonSerializer() };
 
             Logger.Debug($"Setting up the arguments {arguments}.");
             component.SetArguments(arguments);
