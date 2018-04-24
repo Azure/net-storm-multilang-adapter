@@ -1,4 +1,7 @@
-﻿using Dotnet.Storm.Adapter.Messaging;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
+using Dotnet.Storm.Adapter.Messaging;
 using Dotnet.Storm.Adapter.Components;
 
 namespace Dotnet.Storm.Adapter.Test
