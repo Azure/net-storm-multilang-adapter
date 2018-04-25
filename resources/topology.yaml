@@ -10,20 +10,20 @@ spouts:
  - id: emit-sentence
    className: org.apache.storm.flux.wrappers.spouts.FluxShellSpout
    constructorArgs:
-     - ["dotnet", "Dotnet.Storm.Adapter.dll", "-c", "Dotnet.Storm.Example.EmitSentence", "-a", "Dotnet.Storm.Example", "-l", "debug"]
+     - ["dotnet", "Dotnet.Storm.Example.dll", "-c", "Dotnet.Storm.Example.EmitSentence", "-a", "Dotnet.Storm.Example"]
      - [sentence]
    parallelism: 1
 bolts:
  - id: split-sentence
    className: org.apache.storm.flux.wrappers.bolts.FluxShellBolt
    constructorArgs:
-     - ["dotnet", "Dotnet.Storm.Adapter.dll", "-c", "Dotnet.Storm.Example.SplitSentence", "-a", "Dotnet.Storm.Example", "-l", "debug"]
+     - ["dotnet", "Dotnet.Storm.Example.dll", "-c", "Dotnet.Storm.Example.SplitSentence", "-a", "Dotnet.Storm.Example"]
      - [word]
    parallelism: 3
  - id: count-words
    className: org.apache.storm.flux.wrappers.bolts.FluxShellBolt
    constructorArgs:
-     - ["dotnet", "Dotnet.Storm.Adapter.dll", "-c", "Dotnet.Storm.Example.CountWords", "-a", "Dotnet.Storm.Example", "-l", "debug"]
+     - ["dotnet", "Dotnet.Storm.Example.dll", "-c", "Dotnet.Storm.Example.CountWords", "-a", "Dotnet.Storm.Example"]
      - [word, count]
    parallelism: 3
 streams:

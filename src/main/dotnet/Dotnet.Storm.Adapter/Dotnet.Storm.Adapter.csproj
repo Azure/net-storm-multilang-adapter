@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <Platform>x64</Platform>  
+    <ApplicationIcon />
+    <StartupObject />  
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet">
@@ -35,22 +36,12 @@
     <AssemblyVersion>1.0.12.0</AssemblyVersion>
 
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="$(ProjectRuntimeConfigFilePath)" Pack="true" />
-  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.2.1" />
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="System.Runtime.Caching" Version="4.5.0-preview1-26216-02" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="log4net.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

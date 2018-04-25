@@ -1,4 +1,3 @@
-// Licensed to the Apache Software Foundation (ASF) under one
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 

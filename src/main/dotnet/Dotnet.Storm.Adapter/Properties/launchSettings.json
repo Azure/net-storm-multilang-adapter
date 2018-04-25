@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Microsoft.Storm.Adapter": {
-      "commandName": "Project",
-      "commandLineArgs": "-c Dotnet.Storm.Adapter.DebugComponent -l debug -p overtime -a bin\\Debug\\netcoreapp2.0\\Dotnet.Storm.Adapter"
+      "commandName": "Project"
     }
   }
 }
