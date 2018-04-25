@@ -49,7 +49,7 @@ namespace Dotnet.Storm.Adapter
 
         private static Component CreateComponent(string className, string arguments)
         {
-            Type type = Type.GetType(className, true);
+            Type type = Assembly.GetEntryAssembly().GetType(className, true);
             Component component = (Component)Activator.CreateInstance(type);
             component.Connect(arguments, new StandardChannel());
             return component;

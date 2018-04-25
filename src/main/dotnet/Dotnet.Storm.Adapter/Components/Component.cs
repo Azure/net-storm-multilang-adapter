@@ -23,6 +23,12 @@ namespace Dotnet.Storm.Adapter.Components
 
         internal void Connect(string arguments, Channel channel)
         {
+            Logger.Debug($"Current arguments: {arguments}.");
+            Arguments = !string.IsNullOrEmpty(arguments) ? arguments.Split(new char[] { ' ' }) : new string[0];
+
+            Logger.Debug($"Current config: {channel.GetType().Name}.");
+            Channel = channel;
+
             // waiting for storm to send connect message
             Logger.Debug("Waiting for connect message.");
             ConnectMessage message = (ConnectMessage)Channel.Receive<ConnectMessage>();
@@ -42,12 +48,6 @@ namespace Dotnet.Storm.Adapter.Components
 
             Logger.Debug($"Current config: {JsonConvert.SerializeObject(message.Configuration)}.");
             Configuration = message.Configuration;
-
-            Logger.Debug($"Current arguments: {arguments}.");
-            Arguments = !string.IsNullOrEmpty(arguments) ? arguments.Split(new char[] { ' ' }) : new string[0];
-
-            Logger.Debug($"Current config: {channel.GetType().Name}.");
-            Channel = channel;
 
             // send PID back to storm
             Channel.Send(new PidMessage(pid));
