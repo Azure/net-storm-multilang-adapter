@@ -15,9 +15,9 @@
     <Description>A dotnet core adapter for apache storm multilang protocol.</Description>
     <PackageTags>apache;storm;storm-multilang;storm-dotnet-adapter;dotnet-core-adapter</PackageTags>
 
-    <VersionPrefix>1.0.12</VersionPrefix>
-    <Version>1.0.12</Version>
-    <FileVersion>1.0.12.2917</FileVersion>
+    <VersionPrefix>1.0.15</VersionPrefix>
+    <Version>1.0.15</Version>
+    <FileVersion>1.0.15.2917</FileVersion>
 
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Yuriy Alikin</Authors>

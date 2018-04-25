@@ -7,7 +7,7 @@ using Dotnet.Storm.Adapter.Messaging;
 
 namespace Dotnet.Storm.Adapter.Channels
 {
-    internal class CacheChannel : Channel
+    internal class TestChannel : Channel
     {
         private Queue<Message> Cache = new Queue<Message>();
 

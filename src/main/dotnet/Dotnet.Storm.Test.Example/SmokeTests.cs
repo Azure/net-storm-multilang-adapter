@@ -9,9 +9,9 @@ using System.Collections.Generic;
 
 namespace Dotnet.Storm.Test.Example
 {
-    public class HubTest
+    public static class Utilities
     {
-        protected static Dictionary<string, object> GetConfig()
+        public static Dictionary<string, object> GetConfig(this SmokeTests test)
         {
             Dictionary<string, object> config = new Dictionary<string, object>
             {
@@ -21,7 +21,7 @@ namespace Dotnet.Storm.Test.Example
             return config;
         }
 
-        protected static StormContext GetContext()
+        public static StormContext GetContext(this SmokeTests test)
         {
             StormContext sc = new StormContext
             {
@@ -33,19 +33,19 @@ namespace Dotnet.Storm.Test.Example
         }
     }
 
-    public class SmokeTests : HubTest
+    public class SmokeTests
     {
         [Test]
         public void TestCacheChannel()
         {
             // Initialize configuration
-            Dictionary<string, object> config = GetConfig();
+            Dictionary<string, object> config = this.GetConfig();
 
             // Initialize context
-            StormContext sc = GetContext();
+            StormContext sc = this.GetContext();
 
             // Create, and run a spout
-            EmitSentence es = TestApi.CreateComponent<EmitSentence>(sc, config);
+            EmitSentence es = UnitTest.CreateComponent<EmitSentence>(sc, config);
             es.Next();
             List<TestOutput> res = es.GetOutput();
 
@@ -56,7 +56,7 @@ namespace Dotnet.Storm.Test.Example
 
             // Create, and run 1st Bolt
             sc.ComponentId = "componentid2";
-            SplitSentence ss = TestApi.CreateComponent<SplitSentence>(sc, config);
+            SplitSentence ss = UnitTest.CreateComponent<SplitSentence>(sc, config);
             foreach (var output in res)
             {
                 ss.Execute(new StormTuple(((SpoutOutput)output).Id, "EmitSentence", "TaskId", output.Stream, output.Tuple));
@@ -69,7 +69,7 @@ namespace Dotnet.Storm.Test.Example
 
             // Create, and run 2nd Bolt
             sc.ComponentId = "componentid3";
-            CountWords cw = TestApi.CreateComponent<CountWords>(sc, config);
+            CountWords cw = UnitTest.CreateComponent<CountWords>(sc, config);
             foreach (var output in res)
             {
                 cw.Execute(new StormTuple("id", "SplitSentence", "TaskId", output.Stream, output.Tuple));

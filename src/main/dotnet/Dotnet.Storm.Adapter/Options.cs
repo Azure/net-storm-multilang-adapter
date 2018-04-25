@@ -11,16 +11,7 @@ namespace Dotnet.Storm.Adapter
         [Option('c', "class", Required = true, HelpText = "Component class name to be instantiated.")]
         public string Class { get; set; }
 
-        [Option('a', "assembly", Required = true, HelpText = "The assembly which contains the component class.")]
-        public string Assembly { get; set; }
-
-        [Option('p', "parameters", Required = false, HelpText = "Component command line parameters.")]
+        [Option('a', "arguments", Required = false, HelpText = "Command line parameters.")]
         public string Arguments { get; set; }
-
-        [Option('s', "serializer", Required = false, Default = "json", HelpText = "Message serializer. Only JSON serializer is availiable now.")]
-        public string Serializer { get; set; }
-
-        [Option('h', "channel", Required = false, Default = "std", HelpText = "Message exchange channel. Only STD channel is availiable now.")]
-        public string Channel { get; set; }
     }
 }

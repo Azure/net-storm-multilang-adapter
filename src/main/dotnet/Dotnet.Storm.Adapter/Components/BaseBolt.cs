@@ -10,54 +10,21 @@ namespace Dotnet.Storm.Adapter.Components
 {
     public abstract class BaseBolt : Component
     {
-        protected void Ack(string id)
-        {
-            Channel.Send(new AckMessage(id));
-        }
-
-        protected void Fail(string id)
-        {
-            Channel.Send(new FailMessage(id));
-        }
-
-        protected void Emit(List<object> tuple, string stream = "default", long task = 0, List<string> anchors = null, bool needTaskIds = false)
-        {
-            VerificationResult result = VerifyOutput(stream, tuple);
-
-            if (result.IsError)
-            {
-                Logger.Error($"{result} for nex tuple: {tuple}.");
-            }
-            else
-            {
-                BoltTuple message = new BoltTuple()
-                {
-                    Task = task,
-                    Stream = stream,
-                    Tuple = tuple,
-                    Anchors = anchors,
-                    NeedTaskIds = needTaskIds
-                };
-
-                Channel.Send(message);
-            }
-        }
-
+        #region Private part
         private bool running = true;
 
         internal override void Start()
         {
-            OnInitialized?.Invoke(this, EventArgs.Empty);
+            Logger.Info($"Starting bolt: {Context.ComponentId}.");
 
             while (running)
             {
                 InMessage message = Channel.Receive<ExecuteTuple>();
-                if (message != null)
+                if (message != null) // there are only two options: task_ids and tuple to execute
                 {
-                    // there are only two options: task_ids and tuple to execute
                     if (message is TaskIdsMessage ids)
                     {
-                        OnTaskIds?.Invoke(this, new TaskIds(ids));
+                        RiseTaskIds(new TaskIds(ids));
                     }
                     if (message is ExecuteTuple tuple)
                     {
@@ -117,15 +84,45 @@ namespace Dotnet.Storm.Adapter.Components
             }
         }
 
+        private void Ack(string id)
+        {
+            Channel.Send(new AckMessage(id));
+        }
+
+        private void Fail(string id)
+        {
+            Channel.Send(new FailMessage(id));
+        }
+
+        #endregion
+
         #region Bolt interface
-
         public abstract void Execute(StormTuple tuple);
-
-        protected event EventHandler OnInitialized;
 
         protected event EventHandler OnTick;
 
-        protected event EventHandler<TaskIds> OnTaskIds;
+        protected void Emit(List<object> tuple, string stream = "default", long task = 0, List<string> anchors = null, bool needTaskIds = false)
+        {
+            VerificationResult result = VerifyOutput(stream, tuple);
+
+            if (result.IsError)
+            {
+                Logger.Error($"{result} for nex tuple: {tuple}.");
+            }
+            else
+            {
+                BoltTuple message = new BoltTuple()
+                {
+                    Task = task,
+                    Stream = stream,
+                    Tuple = tuple,
+                    Anchors = anchors,
+                    NeedTaskIds = needTaskIds
+                };
+
+                Channel.Send(message);
+            }
+        }
         #endregion
     }
 }

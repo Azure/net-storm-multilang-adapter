@@ -5,7 +5,7 @@ using System;
 using System.Text;
 using log4net;
 using Dotnet.Storm.Adapter.Messaging;
-using Dotnet.Storm.Adapter.Serializers;
+using Newtonsoft.Json;
 
 namespace Dotnet.Storm.Adapter.Channels
 {
@@ -19,7 +19,7 @@ namespace Dotnet.Storm.Adapter.Channels
         {
             lock(syncRoot)
             {
-                Console.WriteLine(Serializer.Serialize(message));
+                Console.WriteLine(JsonConvert.SerializeObject(message));
                 Console.WriteLine("end");
             }
         }
@@ -32,9 +32,9 @@ namespace Dotnet.Storm.Adapter.Channels
 
                 if (message.StartsWith("["))
                 {
-                    return Serializer.Deserialize<TaskIdsMessage>(message);
+                    return JsonConvert.DeserializeObject<TaskIdsMessage>(message);
                 }
-                return Serializer.Deserialize<T>(message);
+                return JsonConvert.DeserializeObject<T>(message);
             }
             catch (ArgumentNullException ex)
             {

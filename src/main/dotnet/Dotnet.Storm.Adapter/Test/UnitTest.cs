@@ -12,7 +12,7 @@ namespace Dotnet.Storm.Adapter.Test
     /// <summary>
     /// Test API class is used to test Spout and Bolt components outside Storm
     /// </summary>
-    public static class TestApi
+    public static class UnitTest
     {
         /// <summary>
         /// Create an instance of the specified component type
@@ -29,7 +29,7 @@ namespace Dotnet.Storm.Adapter.Test
             // Set context and configuration singleton
             comp.Context = sc;
             comp.Configuration = config;
-            comp.Channel = new CacheChannel();
+            comp.Channel = new TestChannel();
 
             return comp;
         }
@@ -41,7 +41,7 @@ namespace Dotnet.Storm.Adapter.Test
         public static List<TestOutput> GetOutput(this Component c)
         {
             List<TestOutput> res = new List<TestOutput>();
-            CacheChannel comp_channel = (CacheChannel)c.Channel;
+            TestChannel comp_channel = (TestChannel)c.Channel;
 
             while (comp_channel.IsEmpty() == false)
             {

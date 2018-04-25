@@ -14,6 +14,55 @@ namespace Dotnet.Storm.Adapter.Components
 {
     public abstract class Component
     {
+        #region Private part
+        private bool? gueranteed = null;
+
+        private int? timeout = null;
+
+        internal Channel Channel { get; set; }
+
+        internal void Connect(string arguments, Channel channel)
+        {
+            // waiting for storm to send connect message
+            Logger.Debug("Waiting for connect message.");
+            ConnectMessage message = (ConnectMessage)Channel.Receive<ConnectMessage>();
+
+            int pid = Process.GetCurrentProcess().Id;
+
+            // storm requires to create empty file named with PID
+            if (!string.IsNullOrEmpty(message.PidDir) && Directory.Exists(message.PidDir))
+            {
+                Logger.Debug($"Creating pid file. PidDir: {message.PidDir}; PID: {pid}");
+                string path = Path.Combine(message.PidDir, pid.ToString());
+                File.WriteAllText(path, "");
+            }
+
+            Logger.Debug($"Current context: {JsonConvert.SerializeObject(message.Context)}.");
+            Context = message.Context;
+
+            Logger.Debug($"Current config: {JsonConvert.SerializeObject(message.Configuration)}.");
+            Configuration = message.Configuration;
+
+            Logger.Debug($"Current arguments: {arguments}.");
+            Arguments = !string.IsNullOrEmpty(arguments) ? arguments.Split(new char[] { ' ' }) : new string[0];
+
+            Logger.Debug($"Current config: {channel.GetType().Name}.");
+            Channel = channel;
+
+            // send PID back to storm
+            Channel.Send(new PidMessage(pid));
+
+            OnInitialized?.Invoke(this, EventArgs.Empty);
+        }
+
+        internal void RiseTaskIds(TaskIds args)
+        {
+            OnTaskIds?.Invoke(this, args);
+        }
+
+        internal abstract void Start();
+        #endregion
+
         #region Component interface
         protected void Sync()
         {
@@ -90,94 +139,66 @@ namespace Dotnet.Storm.Adapter.Components
 
         protected string[] Arguments { get; private set; }
 
-        public IDictionary<string, object> Configuration { get; internal set; }
-
-        public StormContext Context { get; internal set; }
-
-        internal Channel Channel { get; set; }
-
         protected bool IsGuaranteed
         {
             get
             {
-                if (!Configuration.ContainsKey("topology.acker.executors"))
-                    return false;
-
-                object number = Configuration["topology.acker.executors"];
-
-                if (number == null)
+                if(gueranteed == null)
                 {
-                    return true;
-                }
+                    if (!Configuration.ContainsKey("topology.acker.executors"))
+                        gueranteed = false;
+                    else
+                    {
+                        object number = Configuration["topology.acker.executors"];
 
-                if (int.TryParse(number.ToString(), out int result))
-                {
-                    return result != 0;
+                        if (number == null)
+                            gueranteed = true;
+                        else
+                        {
+                            if (int.TryParse(number.ToString(), out int result))
+                                gueranteed = result != 0;
+                            else
+                                gueranteed = false;
+                        }
+                    }
                 }
-
-                return false;
+                return gueranteed.Value;
             }
         }
 
-        protected int MessageTimeout
+        protected int Timeout
         {
             get
             {
-                if (!Configuration.ContainsKey("topology.message.timeout.secs"))
-                    return 30;
-
-                object number = Configuration["topology.message.timeout.secs"];
-                if (number == null)
+                if(!timeout.HasValue)
                 {
-                    return 30;
+                    if (!Configuration.ContainsKey("topology.message.timeout.secs"))
+                        timeout = 30;
+                    else
+                    {
+                        object number = Configuration["topology.message.timeout.secs"];
+                        if (number == null)
+                            timeout = 30;
+                        else
+                        {
+                            if (int.TryParse(number.ToString(), out int result))
+                                timeout = result;
+                            else
+                                timeout = 30;
+                        }
+                    }
                 }
-                if (int.TryParse(number.ToString(), out int result))
-                {
-                    return result;
-                }
-                return 30;
+                return timeout.Value;
             }
         }
+
+        protected event EventHandler<TaskIds> OnTaskIds;
+
+        protected event EventHandler OnInitialized;
+
+        public IDictionary<string, object> Configuration { get; internal set; }
+
+        public StormContext Context { get; internal set; }
         #endregion
-
-        internal void SetArguments(string line)
-        {
-            if(!string.IsNullOrEmpty(line))
-            {
-                Arguments = line.Split(new char[] { ' ' });
-            }
-            else
-            {
-                Arguments = new string[0];
-            }
-        }
-
-        internal void Connect()
-        {
-            // waiting for storm to send connect message
-            Logger.Debug("Waiting for connect message.");
-            ConnectMessage message = (ConnectMessage)Channel.Receive<ConnectMessage>();
-
-            int pid = Process.GetCurrentProcess().Id;
-
-            // storm requires to create empty file named with PID
-            if (!string.IsNullOrEmpty(message.PidDir) && Directory.Exists(message.PidDir))
-            {
-                Logger.Debug($"Creating pid file. PidDir: {message.PidDir}; PID: {pid}");
-                string path = Path.Combine(message.PidDir, pid.ToString());
-                File.WriteAllText(path, "");
-            }
-
-            Logger.Debug($"Current context: {JsonConvert.SerializeObject(message.Context)}.");
-            Context = message.Context;
-
-            Logger.Debug($"Current config: {JsonConvert.SerializeObject(message.Configuration)}.");
-            Configuration = message.Configuration;
-
-            // send PID back to storm
-            Channel.Send(new PidMessage(pid));
-        }
-
-        internal abstract void Start();
     }
 }

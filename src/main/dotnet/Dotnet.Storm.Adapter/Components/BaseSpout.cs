@@ -12,6 +12,7 @@ namespace Dotnet.Storm.Adapter.Components
 {
     public abstract class BaseSpout : Component
     {
+        #region Private part
         private static Random random = new Random();
 
         private const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -22,45 +23,13 @@ namespace Dotnet.Storm.Adapter.Components
 
         private bool running = true;
 
-        protected void Emit(List<object> tuple, string stream = "default", long task = 0, bool needTaskIds = false)
-        {
-            string id = null;
-            if (IsGuaranteed)
-            {
-                id = NextId();
-            }
-
-            VerificationResult result = VerifyOutput(stream, tuple);
-
-            if (result.IsError)
-            {
-                Logger.Error($"{result}  for nex tuple: {tuple}.");
-            }
-            else
-            {
-                SpoutTuple message = new SpoutTuple()
-                {
-                    Id = id,
-                    Task = task,
-                    Stream = stream,
-                    Tuple = tuple,
-                    NeedTaskIds = needTaskIds
-                };
-
-                Channel.Send(message);
-
-                if (id != null && message != null && policy != null)
-                    PendingQueue.Set(id, message, policy);
-            }
-        }
-
         internal override void Start()
         {
-            OnInitialized?.Invoke(this, EventArgs.Empty);
+            Logger.Info($"Starting spout: {Context.ComponentId}.");
 
             policy = new CacheItemPolicy()
             {
-                SlidingExpiration = new TimeSpan(0, 0, MessageTimeout)
+                SlidingExpiration = new TimeSpan(0, 0, Timeout)
             };
 
             while (running)
@@ -71,7 +40,7 @@ namespace Dotnet.Storm.Adapter.Components
                     // there are only two options: task_ids and command
                     if (message is TaskIdsMessage ids)
                     {
-                        OnTaskIds?.Invoke(this, new TaskIds(ids));
+                        RiseTaskIds(new TaskIds(ids));
                     }
                     else
                     {
@@ -189,17 +158,46 @@ namespace Dotnet.Storm.Adapter.Components
         {
             return "id" + new string(Enumerable.Repeat(chars, 6).Select(s => s[random.Next(s.Length)]).ToArray());
         }
+        #endregion
 
         #region Spout interface
-        protected event EventHandler OnInitialized;
-
         protected event EventHandler OnActivate;
 
         protected event EventHandler OnDeactivate;
 
-        protected event EventHandler<TaskIds> OnTaskIds;
-
         protected bool IsEnabled { get; private set; } = false;
+
+        protected void Emit(List<object> tuple, string stream = "default", long task = 0, bool needTaskIds = false)
+        {
+            string id = null;
+            if (IsGuaranteed)
+            {
+                id = NextId();
+            }
+
+            VerificationResult result = VerifyOutput(stream, tuple);
+
+            if (result.IsError)
+            {
+                Logger.Error($"{result} for next tuple: {tuple}.");
+            }
+            else
+            {
+                SpoutTuple message = new SpoutTuple()
+                {
+                    Id = id,
+                    Task = task,
+                    Stream = stream,
+                    Tuple = tuple,
+                    NeedTaskIds = needTaskIds
+                };
+
+                Channel.Send(message);
+
+                if (id != null && message != null && policy != null)
+                    PendingQueue.Set(id, message, policy);
+            }
+        }
 
         public abstract void Next();
         #endregion
