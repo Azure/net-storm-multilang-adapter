@@ -3,8 +3,6 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <ApplicationIcon />
-    <StartupObject />  
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet">
@@ -15,9 +13,9 @@
     <Description>A dotnet core adapter for apache storm multilang protocol.</Description>
     <PackageTags>apache;storm;storm-multilang;storm-dotnet-adapter;dotnet-core-adapter</PackageTags>
 
-    <VersionPrefix>1.0.16</VersionPrefix>
-    <Version>1.0.16</Version>
-    <FileVersion>1.0.16.2917</FileVersion>
+    <VersionPrefix>1.0.17</VersionPrefix>
+    <Version>1.0.17</Version>
+    <FileVersion>1.0.17.2917</FileVersion>
 
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Yuriy Alikin</Authors>
@@ -41,7 +39,7 @@
     <PackageReference Include="CommandLineParser" Version="2.2.1" />
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
-    <PackageReference Include="System.Runtime.Caching" Version="4.5.0-preview1-26216-02" />
+    <PackageReference Include="System.Runtime.Caching" Version="4.5.0-preview2-26406-04" />
   </ItemGroup>
 
 </Project>
