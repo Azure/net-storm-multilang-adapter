@@ -13,6 +13,10 @@ namespace Dotnet.Storm.Adapter.Logging
     {
         private Channel channel;
 
+        internal StormAppender()
+        {
+        }
+
         internal StormAppender(Channel channel)
         {
             this.channel = channel;
