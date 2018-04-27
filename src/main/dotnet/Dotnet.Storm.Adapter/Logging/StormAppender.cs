@@ -3,7 +3,6 @@
 
 using Dotnet.Storm.Adapter.Channels;
 using Dotnet.Storm.Adapter.Messaging;
-using log4net;
 using log4net.Appender;
 using log4net.Core;
 
@@ -12,6 +11,11 @@ namespace Dotnet.Storm.Adapter.Logging
     public class StormAppender : AppenderSkeleton
     {
         private Channel channel;
+
+        public StormAppender()
+        {
+
+        }
 
         internal StormAppender(Channel channel)
         {
