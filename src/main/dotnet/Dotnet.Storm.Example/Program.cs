@@ -9,7 +9,7 @@ namespace Dotnet.Storm.Example
     {
         static void Main(string[] args)
         {
-            Fabric.RunComponent(args);
+            Factory.RunComponent(args);
         }
     }
 }

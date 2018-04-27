@@ -8,6 +8,7 @@ using Dotnet.Storm.Adapter.Logging;
 using log4net;
 using log4net.Appender;
 using log4net.Config;
+using log4net.Layout;
 using log4net.Repository;
 using log4net.Repository.Hierarchy;
 using System;
@@ -16,55 +17,42 @@ using System.Reflection;
 
 namespace Dotnet.Storm.Adapter
 {
-    public static class Fabric
+    public static class Factory
     {
-        private readonly static ILog Logger = LogManager.GetLogger(typeof(Fabric));
+        private readonly static ILog Logger = LogManager.GetLogger(typeof(Factory));
 
         public static void RunComponent(string[] args)
         {
-            ILoggerRepository repository = ConfigureLogging();
+            Hierarchy repository = (Hierarchy)ConfigureLogging();
+
+            foreach (IAppender appender in repository.GetAppenders())
+            {
+
+                if (appender.GetType().IsAssignableFrom(typeof(StormAppender)) || appender.GetType().IsAssignableFrom(typeof(ConsoleAppender)))
+                {
+                    Logger.Debug($"Removing {appender.GetType().Name} appender.");
+                    repository.Root.RemoveAppender(appender);
+                }
+            }
 
             Options options = ParseArgumants(args);
 
-            DisableStormLogger(repository);
+            Channel channel = new StandardChannel();
 
-            Component component = CreateComponent(options.Class, options.Arguments);
+            Component component = CreateComponent(options.Class, options.Arguments, channel);
 
-            EnableStormLogger(repository);
+            Logger.Debug($"Enabling storm logging mechanism.");
+            repository.Root.AddAppender(new StormAppender(channel) { Layout = new PatternLayout("%m") });
 
             component.Start();
         }
 
-        private static void EnableStormLogger(ILoggerRepository repository)
-        {
-            Logger.Debug($"Enabling storm logging mechanism.");
-            foreach (IAppender appender in ((Hierarchy)repository).GetAppenders())
-            {
-                if (appender.GetType().IsAssignableFrom(typeof(StormAppender)))
-                {
-                    ((StormAppender)appender).Enabled = true;
-                }
-            }
-        }
-
-        private static Component CreateComponent(string className, string arguments)
+        private static Component CreateComponent(string className, string arguments, Channel channel)
         {
             Type type = Assembly.GetEntryAssembly().GetType(className, true);
             Component component = (Component)Activator.CreateInstance(type);
-            component.Connect(arguments, new StandardChannel());
+            component.Connect(arguments, channel);
             return component;
-        }
-
-        private static void DisableStormLogger(ILoggerRepository repository)
-        {
-            foreach (IAppender appender in repository.GetAppenders())
-            {
-                if (appender.GetType().IsAssignableFrom(typeof(StormAppender)))
-                {
-                    Logger.Debug($"Disabling storm logging mechanism.");
-                    ((StormAppender)appender).Enabled = false;
-                }
-            }
         }
 
         private static ILoggerRepository ConfigureLogging()

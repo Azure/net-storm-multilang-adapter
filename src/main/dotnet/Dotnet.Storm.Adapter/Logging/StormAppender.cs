@@ -11,19 +11,19 @@ namespace Dotnet.Storm.Adapter.Logging
 {
     public class StormAppender : AppenderSkeleton
     {
-        internal bool Enabled { get; set; }
+        private Channel channel;
 
-        internal Channel Channel { get; set; }
+        internal StormAppender(Channel channel)
+        {
+            this.channel = channel;
+        }
 
         protected override void Append(LoggingEvent loggingEvent)
         {
-            if (Enabled)
-            {
-                string message = RenderLoggingEvent(loggingEvent);
-                LogLevel level = GetStormLevel(loggingEvent.Level);
+            string message = RenderLoggingEvent(loggingEvent);
+            LogLevel level = GetStormLevel(loggingEvent.Level);
 
-                Channel.Send(new LogMessage(message, level));
-            }
+            channel.Send(new LogMessage(message, level));
         }
 
         public static LogLevel GetStormLevel(Level level)
