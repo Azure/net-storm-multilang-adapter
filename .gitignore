@@ -297,4 +297,9 @@ __pycache__/
 target/
 .project
 .classpath
-storm-multilang/dotnet/src/main/dotnet/Dotnet.Storm.Example/log-file.txt
+**log-file.txt
+
+# IntelliJ IDEA
+.idea
+**/*.iml
+**/*.ipr

@@ -1,6 +1,6 @@
 Overview
 ========
-Dotnet.Strom.Adapter is a .NET Core 2.0 implementation of Storm multi-lang protocol. You can use it to implement CSharp components for your topology. 
+Dotnet.Strom.Adapter is a .NET Standard 2.0 implementation of Storm multi-lang protocol. You can use it to implement CSharp components for your topology. 
 
 Prerequisites
 ========
@@ -35,9 +35,7 @@ Command line parameters
 ========
 
 * -c (class name) - component class to instantiate
-* -a (assembly name) - dll, containing component class
-* -p (parameters) - parameters will be available through Arguments property
-* -l (log level) - one of TRACE, DEBUG, INFO, WARN, ERROR
+* -a (arguments) - parameters will be available through Arguments property
 
 The example of usage is 
 
@@ -45,8 +43,8 @@ The example of usage is
 		 - id: emit-sentence
 		   className: org.apache.storm.flux.wrappers.spouts.FluxShellSpout
 		   constructorArgs:
-		     - ["dotnet", "Dotnet.Storm.Adapter.dll", "-c", "Dotnet.Storm.Example.EmitSentense", "-a", "Dotnet.Storm.Example", "-l", "debug"]
-		     - [sentence]
+			 - ["dotnet", "Dotnet.Storm.Adapter.dll", "-c", "Dotnet.Storm.Example.EmitSentense", "-a", "Dotnet.Storm.Example", "-l", "debug"]
+			 - [sentence]
 		   parallelism: 1
 
 API
@@ -55,76 +53,122 @@ API
 ## Common
 - Properties
 
-        protected readonly static ILog Logger;
+		protected readonly static ILog Logger;
 
-        protected string[] Arguments;
+		protected string[] Arguments;
 
-        protected static IDictionary<string, object> Configuration;
+		protected static IDictionary<string, object> Configuration;
 
-        protected static StormContext Context;
+		protected static StormContext Context;
 
-        protected static bool IsGuarantee;
+		protected static bool IsGuarantee;
 
-        protected static int MessageTimeout;
-            
+		protected static int MessageTimeout;
+			
 - Events
 
-        protected event EventHandler<TaskIds> OnTaskIds;
+		protected event EventHandler<TaskIds> OnTaskIds;
 
-        protected event EventHandler OnInitialized;
+		protected event EventHandler OnInitialized;
 
-- Storm methods
+- Methods
 
-        public void Sync()
+		public void Sync()
 
-        public void Error(string message)
+		public void Error(string message)
 
-        public void Metrics(string name, object value)
+		public void Metrics(string name, object value)
 
-        public VerificationResult VerifyInput(string component, string stream, List<object> tuple)
+		public VerificationResult VerifyInput(string component, string stream, List<object> tuple)
 
-        public VerificationResult VerifyOutput(string stream, List<object> tuple)
+		public VerificationResult VerifyOutput(string stream, List<object> tuple)
 
 ## Spout specific
 - Methods
 
-        protected abstract void Next();
+		public abstract void Next();
+
+		public void Emit(List<object> tuple, string stream = "default", long task = 0, bool needTaskIds = false)
 
 - Events
 
-        protected event EventHandler OnActivate;
+		protected event EventHandler OnActivate;
 
-        protected event EventHandler OnDeactivate;
+		protected event EventHandler OnDeactivate;
 
 - Properties
 
-        protected bool IsEnabled = false;
-
-- Storm methods
-
-        public void Emit(List<object> tuple, string stream = "default", long task = 0, bool needTaskIds = false)
+		protected bool IsEnabled = false;
 
 ## Bolt specific
 - Methods
 
-         protected abstract void Execute(StormTuple tuple);
+		public abstract void Execute(StormTuple tuple);
 
-## Bolt specific
+		public void Ack(string id);
+
+		public void Fail(string id);
+
+		public void Emit(List<object> tuple, string stream = "default", long task = 0, List<string> anchors = null, bool needTaskIds = false);
+
 - Events
 
-        protected event EventHandler<EventArgs> OnTick;
+		protected event EventHandler<EventArgs> OnTick;
 
-- Storm methods
+Testing
+========
 
-        public void Ack(string id);
+ - Create the context and configuration for all components you want to test.
 
-        public void Fail(string id);
+		StormContext context1 = new StormContext()
+		{
+			ComponentId = "..."
+			Streams = new string[] { "...", "..." }
+			.
+			.
+			.
+		};
 
-        public void Emit(List<object> tuple, string stream = "default", long task = 0, List<string> anchors = null, bool needTaskIds = false);
+		Dictionary<string, object> config => new Dictionary<string, object>
+		{
+			["topology.workers"] = 5,
+			["topology.tick.tuple.freq.secs"] = 30,
+			.
+			.
+			.
+		};
+		
 
-- Methods
+- If you want to test a spout than call Next method and chech the output using GetOutput extension method from Dotnet.Storm.Adapter.Test namespace.
 
-         protected abstract void Execute(StormTuple tuple);
+		MySpout1 spout1 = UnitTest.CreateComponent<MySpout1>(context1, config);
+		spout1.Next();
+
+		List<TestOutput> output = spout1.GetOutput();
+
+		Asset.AreEqual(1045, output.Count());
+		.
+		.
+
+ - If you want to test a bolt than you have to merge the outputs from all the spouts this bolt connected to and pass the result as an input to bolt.
+
+		List<TestOutput> input = UnitTest.Merge(
+			UnitTest.CreateComponent<MySpout1>(context1, config),
+			UnitTest.CreateComponent<MySpout2>(context1, config),
+			.
+			.
+		};
+
+		MyBolt1 bolt1 = UnitTest.CreateComponent<MyBolt1>(context7, config, input);
+
+		List<TestOutput> output = bolt1.GetOutput();
+
+		Asset.AreEqual(1045, output.Count());
+		.
+		.
+		.
+		
+ - You can find an example test code in Dotnet.Storm.Test.Example project 
 
 # Contributing
 

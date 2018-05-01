@@ -9,40 +9,15 @@ using System.Collections.Generic;
 
 namespace Dotnet.Storm.Test.Example
 {
-    public static class Utilities
+    public static class SmokeTests
     {
-        public static Dictionary<string, object> GetConfig(this SmokeTests test)
-        {
-            Dictionary<string, object> config = new Dictionary<string, object>
-            {
-                ["configkey1"] = "configvalue1",
-                ["configkey2"] = "configvalue2"
-            };
-            return config;
-        }
-
-        public static StormContext GetContext(this SmokeTests test)
-        {
-            StormContext sc = new StormContext
-            {
-                ComponentId = "componentid1",
-                StreamToOputputFields = new Dictionary<string, List<string>>()
-            };
-            sc.StreamToOputputFields["default"] = new List<string>(new string[] { "default" });
-            return sc;
-        }
-    }
-
-    public class SmokeTests
-    {
-        [Test]
-        public void TestCacheChannel()
+        [Test] public static void TestExample()
         {
             // Initialize configuration
-            Dictionary<string, object> config = this.GetConfig();
+            Dictionary<string, object> config = GetConfig();
 
             // Initialize context
-            StormContext sc = this.GetContext();
+            StormContext sc = GetContext();
 
             // Create, and run a spout
             EmitSentence es = UnitTest.CreateComponent<EmitSentence>(sc, config);
@@ -75,5 +50,17 @@ namespace Dotnet.Storm.Test.Example
                 cw.Execute(new StormTuple("id", "SplitSentence", "TaskId", output.Stream, output.Tuple));
             }
         }
+
+        private static Dictionary<string, object> GetConfig() => new Dictionary<string, object>
+        {
+            ["configkey1"] = "configvalue1",
+            ["configkey2"] = "configvalue2"
+        };
+
+        private static StormContext GetContext() => new StormContext
+        {
+            ComponentId = "componentid1",
+            StreamToOputputFields = new Dictionary<string, List<string>>() { { "default", new List<string>() { "title" } } }
+        };
     }
 }

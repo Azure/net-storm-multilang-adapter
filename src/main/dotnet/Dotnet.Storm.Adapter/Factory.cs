@@ -1,19 +1,20 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
+using System;
+using System.IO;
+using System.Reflection;
 
-using CommandLine;
 using Dotnet.Storm.Adapter.Channels;
 using Dotnet.Storm.Adapter.Components;
 using Dotnet.Storm.Adapter.Logging;
+
+using CommandLine;
+
 using log4net;
 using log4net.Appender;
 using log4net.Config;
 using log4net.Layout;
-using log4net.Repository;
 using log4net.Repository.Hierarchy;
-using System;
-using System.IO;
-using System.Reflection;
 
 namespace Dotnet.Storm.Adapter
 {
@@ -23,39 +24,30 @@ namespace Dotnet.Storm.Adapter
 
         public static void RunComponent(string[] args)
         {
-            Hierarchy repository = (Hierarchy)ConfigureLogging();
+            Hierarchy repository = ConfigureLogging();
 
-            foreach (IAppender appender in repository.GetAppenders())
-            {
+            repository.CleanAppenders();
 
-                if (appender.GetType().IsAssignableFrom(typeof(StormAppender)) || appender.GetType().IsAssignableFrom(typeof(ConsoleAppender)))
-                {
-                    Logger.Debug($"Removing {appender.GetType().Name} appender.");
-                    repository.Root.RemoveAppender(appender);
-                }
-            }
-
-            Options options = ParseArgumants(args);
+            Options options = args.ReadOptions();
 
             Channel channel = new StandardChannel();
 
-            Component component = CreateComponent(options.Class, options.Arguments, channel);
+            Component component = CreateComponent(options, channel);
 
-            Logger.Debug($"Enabling storm logging mechanism.");
-            repository.Root.AddAppender(new StormAppender(channel) { Layout = new PatternLayout("%m") });
+            repository.AppendStorm(channel);
 
             component.Start();
         }
 
-        private static Component CreateComponent(string className, string arguments, Channel channel)
+        private static Component CreateComponent(Options options, Channel channel)
         {
-            Type type = Assembly.GetEntryAssembly().GetType(className, true);
+            Type type = Assembly.GetEntryAssembly().GetType(options.Class, true);
             Component component = (Component)Activator.CreateInstance(type);
-            component.Connect(arguments, channel);
+            component.Connect(options.Arguments, channel);
             return component;
         }
 
-        private static ILoggerRepository ConfigureLogging()
+        private static Hierarchy ConfigureLogging()
         {
             Assembly entryAssembly = Assembly.GetEntryAssembly();
             string config = Path.Combine(Path.GetDirectoryName(entryAssembly.Location), "log4net.config");
@@ -72,15 +64,46 @@ namespace Dotnet.Storm.Adapter
 
             Logger.Debug($"Current working dir: {Environment.CurrentDirectory}.");
 
-            return repository;
+            return (Hierarchy)repository;
         }
 
-        private static Options ParseArgumants(string[] args)
+        private static Options ParseOptions(string[] args)
         {
             Options result = null;
 
             var parser = new Parser(with => with.EnableDashDash = true).ParseArguments<Options>(args);
                 parser.WithParsed(options => { result = options; });
+
+            Logger.Info($"Current parameters: className={result.Class}, arguments={result.Arguments}.");
+
+            return result;
+        }
+
+        private static void CleanAppenders(this Hierarchy hierarchy)
+        {
+            foreach (IAppender appender in hierarchy.GetAppenders())
+            {
+
+                if (appender.GetType().IsAssignableFrom(typeof(StormAppender)) || appender.GetType().IsAssignableFrom(typeof(ConsoleAppender)))
+                {
+                    Logger.Debug($"Removing {appender.GetType().Name} appender.");
+                    hierarchy.Root.RemoveAppender(appender);
+                }
+            }
+        }
+
+        private static void AppendStorm(this Hierarchy hierarchy, Channel channel)
+        {
+            Logger.Debug($"Enabling storm logging mechanism.");
+            hierarchy.Root.AddAppender(new StormAppender(channel) { Layout = new PatternLayout("%m") });
+        }
+
+        private static Options ReadOptions(this string[] options)
+        {
+            Options result = null;
+
+            var parser = new Parser(with => with.EnableDashDash = true).ParseArguments<Options>(options);
+            parser.WithParsed(opts => { result = opts; });
 
             Logger.Info($"Current parameters: className={result.Class}, arguments={result.Arguments}.");
 
