@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Dotnet.Storm.Example": {
+      "commandName": "Project",
+      "commandLineArgs": "-c Dotnet.Storm.Example.EmitSentence -a Dotnet.Storm.Example"
+    }
+  }
+}

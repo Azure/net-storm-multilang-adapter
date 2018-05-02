@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "Microsoft.Storm.Adapter": {
+      "commandName": "Project"
+    }
+  }
+}
