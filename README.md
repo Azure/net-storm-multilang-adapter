@@ -1,6 +1,6 @@
 Overview
 ========
-Dotnet.Strom.Adapter is a .NET Standard 2.0 implementation of [Apache Storm](http://storm.apache.org/) multi-lang protocol. You can use it to implement C# / .net components for your Storm topology. 
+Dotnet.Strom.Adapter is a .NET Standard 2.0 implementation of [Apache Storm(TM)](http://storm.apache.org/) multi-lang protocol. You can use it to implement C# / .net components for your Storm topology. 
 
 Prerequisites
 ========
