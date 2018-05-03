@@ -286,3 +286,20 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+
+# Visual Studio & MSBuild
+.vscode
+**/logs
+**/output
+**/bin
+**/obj
+.settings/
+target/
+.project
+.classpath
+**log-file.txt
+
+# IntelliJ IDEA
+.idea
+**/*.iml
+**/*.ipr

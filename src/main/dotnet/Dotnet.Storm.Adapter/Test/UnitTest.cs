@@ -1,0 +1,62 @@
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
+using System;
+using System.Collections.Generic;
+using Dotnet.Storm.Adapter.Channels;
+using Dotnet.Storm.Adapter.Components;
+using Dotnet.Storm.Adapter.Messaging;
+
+namespace Dotnet.Storm.Adapter.Test
+{
+    /// <summary>
+    /// Test API class is used to test Spout and Bolt components outside Storm
+    /// </summary>
+    public static class UnitTest
+    {
+        /// <summary>
+        /// Create an instance of the specified component type
+        /// </summary>
+        /// <param name="type">The component type</param>
+        /// <param name="sc">Storm context</param>
+        /// <param name="config">Storm configuration</param>
+        /// <returns></returns>
+        public static T CreateComponent<T>(StormContext sc, Dictionary<string, object> config) where T : Component
+        {
+            // Create component instance
+            T comp = (T)Activator.CreateInstance(typeof(T));
+
+            // Set context and configuration singleton
+            comp.Context = sc;
+            comp.Configuration = config;
+            comp.Channel = new TestChannel();
+
+            return comp;
+        }
+
+        /// <summary>
+        /// Dump all tuples out of channel cache
+        /// </summary>
+        /// <returns></returns>
+        public static List<TestOutput> GetOutput(this Component c)
+        {
+            List<TestOutput> res = new List<TestOutput>();
+            TestChannel comp_channel = (TestChannel)c.Channel;
+
+            while (comp_channel.IsEmpty() == false)
+            {
+                OutMessage message = comp_channel.OutputMessage();
+                if (message is SpoutTuple)
+                {
+                    res.Add(new SpoutOutput((SpoutTuple)message, c.Context.ComponentId));
+                }
+                else if (message is BoltTuple)
+                {
+                    res.Add(new BoltOutput((BoltTuple)message, c.Context.ComponentId));
+                }
+            }
+
+            return res;
+        }
+    }
+}
