@@ -10,6 +10,9 @@ Prerequisites
 
 Install form NuGet
 ========
+
+This component is available as a NuGet package - see [NuGet.org here](https://www.nuget.org/packages/Dotnet.Storm.Adapter/)
+
 		PM> Install-Package Dotnet.Storm.Adapter
 
 Build locally
