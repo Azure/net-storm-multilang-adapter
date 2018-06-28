@@ -96,6 +96,7 @@ namespace Dotnet.Storm.Adapter
         {
             Logger.Debug($"Enabling storm logging mechanism.");
             hierarchy.Root.AddAppender(new StormAppender(channel) { Layout = new PatternLayout("%m") });
+            hierarchy.Configured = true;
         }
 
         private static Options ReadOptions(this string[] options)

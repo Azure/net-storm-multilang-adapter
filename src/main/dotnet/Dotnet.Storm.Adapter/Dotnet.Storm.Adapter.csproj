@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -20,7 +20,7 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Microsoft</Authors>
     <Company>Microsoft</Company>
-    <Copyright>Copyright (c) Microsoft Corporation. All Rights Reserved</Copyright>
+    <Copyright>© Microsoft Corporation. All Rights Reserved</Copyright>
 
     <RepositoryType>git</RepositoryType>
 
@@ -29,7 +29,8 @@
     <PackageLicenseUrl>https://github.com/Azure/net-storm-multilang-adapter/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/Azure/net-storm-multilang-adapter</RepositoryUrl>
 
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>False</SignAssembly>
     <AssemblyVersion>1.0.1</AssemblyVersion>
 
@@ -40,7 +41,7 @@
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="System.Runtime.Caching" Version="4.5.0-rc1" />
-    <PackageReference Include="System.Security.Permissions" Version="4.5.0-rc1" />
+    <PackageReference Include="System.Security.Permissions" Version="4.5.0-rc1" developmentDependency="true" />
   </ItemGroup>
 
 </Project>
