@@ -11,13 +11,11 @@ namespace Dotnet.Storm.Adapter.Components
     public abstract class BaseBolt : Component
     {
         #region Private part
-        private bool running = true;
-
         internal override void Start()
         {
             Logger.Info($"Starting bolt: {Context.ComponentId}.");
 
-            while (running)
+            while (true)
             {
                 InMessage message = Channel.Receive<ExecuteTuple>();
                 if (message != null) // there are only two options: task_ids and tuple to execute
@@ -93,7 +91,6 @@ namespace Dotnet.Storm.Adapter.Components
         {
             Channel.Send(new FailMessage(id));
         }
-
         #endregion
 
         #region Bolt interface

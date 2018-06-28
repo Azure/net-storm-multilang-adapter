@@ -21,8 +21,6 @@ namespace Dotnet.Storm.Adapter.Components
 
         private CacheItemPolicy policy;
 
-        private bool running = true;
-
         internal override void Start()
         {
             Logger.Info($"Starting spout: {Context.ComponentId}.");
@@ -32,7 +30,7 @@ namespace Dotnet.Storm.Adapter.Components
                 SlidingExpiration = new TimeSpan(0, 0, Timeout)
             };
 
-            while (running)
+            while (true)
             {
                 InMessage message = Channel.Receive<CommandMessage>();
                 if (message != null)
