@@ -20,7 +20,7 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Microsoft</Authors>
     <Company>Microsoft</Company>
-    <Copyright>© Microsoft Corporation. All Rights Reserved</Copyright>
+    <Copyright>© Microsoft Corporation. All Rights Reserved.</Copyright>
 
     <RepositoryType>git</RepositoryType>
 
